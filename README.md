@@ -1,12 +1,89 @@
-# React + Vite
+# FiveStock - Sistema de Gestión de Inventarios
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FiveStock es una aplicación web diseñada para la gestión de inventarios, permitiendo a los usuarios administrar productos, categorías, marcas, personal y realizar un seguimiento de las entradas y salidas de inventario a través de un Kardex. Además, ofrece la generación de reportes detallados.
 
-Currently, two official plugins are available:
+## Características Principales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Autenticación de Usuarios:** Sistema de inicio de sesión y registro de usuarios, con diferentes roles y permisos.
+- **Dashboard Principal:** Visualización de información general de la empresa y accesos directos a las principales funcionalidades.
+- **Gestión de Productos:**
+  - CRUD completo para productos, incluyendo descripción, stock, precios de venta y compra, etc.
+  - Asignación de categorías y marcas.
+- **Gestión de Categorías y Marcas:**
+  - Creación, edición y eliminación de categorías y marcas para una mejor organización de los productos.
+- **Gestión de Personal:**
+  - Administración de usuarios (personal) con asignación de roles y permisos específicos para cada módulo del sistema.
+- **Kardex de Inventario:**
+  - Registro de entradas y salidas de productos, manteniendo un historial detallado de los movimientos de inventario.
+- **Generación de Reportes:**
+  - Reportes en formato PDF para visualizar el stock actual, productos bajo el mínimo, kardex por producto e inventario valorado.
+- **Tema Claro y Oscuro:** Interfaz adaptable a las preferencias del usuario.
 
-## Expanding the ESLint configuration
+## Tecnologías Utilizadas
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Este proyecto fue desarrollado utilizando las siguientes tecnologías:
+
+- **Frontend:**
+  - [**React**](https://reactjs.org/) (v19): Biblioteca para construir interfaces de usuario.
+  - [**Vite**](https://vitejs.dev/): Herramienta de desarrollo frontend moderna y rápida.
+  - [**Styled Components**](https://styled-components.com/): Para la estilización de componentes.
+  - [**React Router**](https://reactrouter.com/) (v7): Para el enrutamiento en la aplicación.
+  - [**React Query**](https://tanstack.com/query/latest) (v5): Para la gestión del estado del servidor, fetching, caching, y actualización de datos.
+  - [**Zustand**](https://github.com/pmndrs/zustand): Para la gestión del estado global de la aplicación.
+  - [**React Hook Form**](https://react-hook-form.com/): Para la gestión de formularios.
+- **Backend (BaaS):**
+  - [**Supabase**](https://supabase.io/): Plataforma open source que provee base de datos PostgreSQL, autenticación, y almacenamiento.
+- **Librerías Adicionales:**
+  - [**@react-pdf/renderer**](https://react-pdf.org/): Para la generación de documentos PDF en el cliente.
+  - [**@tanstack/react-table**](https://tanstack.com/table/v8): Para la creación de tablas y datagrids.
+  - [**SweetAlert2**](https://sweetalert2.github.io/): Para la creación de alertas y modales atractivos.
+  - [**React Icons**](https://react-icons.github.io/react-icons/): Para la inclusión de iconos en la aplicación.
+
+## Estructura del Proyecto
+
+El proyecto está organizado de la siguiente manera:
+
+```
+/src
+├── assets/             # Archivos estáticos como imágenes y JSON
+├── components/         # Componentes reutilizables
+│   ├── atomos/         # Componentes más pequeños y básicos
+│   ├── moleculas/      # Componentes compuestos por átomos
+│   ├── organismos/     # Componentes más complejos
+│   └── templates/      # Plantillas de páginas
+├── context/            # Contexto de React (ej. AuthContext)
+├── hooks/              # Hooks personalizados
+├── pages/              # Vistas principales de la aplicación
+├── routers/            # Configuración de rutas
+├── store/              # Stores de Zustand para el estado global
+├── styles/             # Estilos globales, temas y variables
+└── supabase/           # Configuración y funciones CRUD de Supabase
+```
+
+## Instalación y Configuración
+
+Sigue estos pasos para ejecutar el proyecto en tu entorno local:
+
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/jnzader/pf_pps.git](https://github.com/jnzader/pf_pps.git)
+    cd pf_pps
+    ```
+
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
+
+3.  **Configurar variables de entorno:**
+    Crea un archivo `.env` en la raíz del proyecto y añade las credenciales de tu proyecto de Supabase:
+    ```
+    VITE_APP_SUPABASE_URL=TU_URL_DE_SUPABASE
+    VITE_APP_SUPABASE_ANON_KEY=TU_API_KEY_DE_SUPABASE
+    ```
+
+4.  **Ejecutar el proyecto:**
+    ```bash
+    npm run dev
+    ```
+    La aplicación estará disponible en `http://localhost:5173`.

@@ -8,6 +8,7 @@ import { useUsuariosStore } from "../store/UsuariosStore";
 import { SpinnerLoader } from "../components/moleculas/SpinnerLoader";
 import { ErrorMolecula } from "../components/moleculas/ErrorMolecula";
 import { MostrarEmpresa } from "../supabase/crudEmpresa";
+import { Empresa } from "../pages/Empresa";
 import { Configuracion } from "../pages/Configuracion";
 import { Marca } from "../pages/Marca"
 import { Categorias } from "../pages/Categorias"
@@ -38,6 +39,12 @@ export function MyRoutes() {
       <Route path="/configurar" element={<ProtectedRoute accessBy="authenticated">
         <Layout>
           <Configuracion />
+        </Layout>
+      </ProtectedRoute>} />
+
+      <Route path="/configurar/empresa" element={<ProtectedRoute accessBy="authenticated">
+        <Layout>
+          <Empresa />
         </Layout>
       </ProtectedRoute>} />
 

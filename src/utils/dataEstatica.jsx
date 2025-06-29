@@ -81,14 +81,13 @@ export const DataModulosConfiguracion =[
     link:"/configurar/personal",
    
   },
-/*
   {
     title:"Tu empresa",
     subtitle:"configura tus opciones básicas",
     icono:"https://i.ibb.co/x7mHPgm/administracion-de-empresas.png",
     link:"/configurar/empresa",
     
-  },*/
+  },
   {
     title:"Categoria de productos",
     subtitle:"asigna categorias a tus productos",

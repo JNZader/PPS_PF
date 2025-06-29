@@ -1,13 +1,14 @@
 import { create } from "zustand";
-import { ContarUsuariosXempresa, MostrarEmpresa } from "../supabase/crudEmpresa";
-import { supabase } from "../supabase/supabase.config";
+import { ContarUsuariosXempresa, EditarEmpresa, MostrarEmpresa } from "../supabase/crudEmpresa";
 
 export const useEmpresaStore = create((set, get) => ({
   contadorusuarios: 0,
   dataempresa: {},
+  parametros: {},
 
   mostrarEmpresa: async (p) => {
     try {
+      set({ parametros: p });
       const response = await MostrarEmpresa(p);
       set({ dataempresa: response.empresa || {} });
       return response.empresa || {};
@@ -16,6 +17,12 @@ export const useEmpresaStore = create((set, get) => ({
       set({ dataempresa: {} });
       return {};
     }
+  },
+
+  editarEmpresa: async (p) => {
+    await EditarEmpresa(p);
+    const { mostrarEmpresa, parametros } = get();
+    await mostrarEmpresa(parametros);
   },
 
   contarusuariosXempresa: async (p) => {

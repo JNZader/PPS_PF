@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.config";
+import Swal from "sweetalert2";
 
 export const MostrarEmpresa = async (p) => {
   if (!p?.idusaurio) {
@@ -32,3 +33,25 @@ export const ContarUsuariosXempresa = async (p) => {
 
   return data ?? 0;
 };
+
+export async function EditarEmpresa(p) {
+  const { error } = await supabase
+    .from("empresa")
+    .update({ nombre: p.nombre, simbolomoneda: p.simbolomoneda })
+    .eq("id", p.id);
+  if (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Error al editar la empresa: " + error.message,
+    });
+  } else {
+    Swal.fire({
+      icon: 'success',
+      title: '¡Guardado!',
+      text: 'Los datos de la empresa se han actualizado.',
+      showConfirmButton: false,
+      timer: 1500
+    });
+  }
+}
