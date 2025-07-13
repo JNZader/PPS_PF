@@ -122,15 +122,17 @@ export const useUsuariosStore = create((set, get) => ({
 
   editarusuarios: async (p, datacheckpermisos, idempresa) => {
     await EditarUsuarios(p);
-    await EliminarPermisos({ id_usuario: p.id });
+    if (p.id !== get().idusuario) {
+      await EliminarPermisos({ id_usuario: p.id });
 
-    for (const item of datacheckpermisos) {
-      if (item.check) {
-        let parametrospermisos = {
-          id_usuario: p.id,
-          idmodulo: item.id,
-        };
-        await InsertarPermisos(parametrospermisos);
+      for (const item of datacheckpermisos) {
+        if (item.check) {
+          let parametrospermisos = {
+            id_usuario: p.id,
+            idmodulo: item.id,
+          };
+          await InsertarPermisos(parametrospermisos);
+        }
       }
     }
 

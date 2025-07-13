@@ -5,6 +5,8 @@ import { v } from "../../../styles/variables";
 import { InputText } from "./InputText";
 import { BtnSave } from "../../moleculas/BtnSave";
 import { useEmpresaStore } from "../../../store/EmpresaStore";
+import { FaRegBuilding, FaMapMarkerAlt, FaPhone, FaBriefcase, FaLink } from "react-icons/fa";
+import { AiOutlineBarcode } from "react-icons/ai";
 
 export function EditarEmpresa() {
     const { dataempresa, editarEmpresa } = useEmpresaStore();
@@ -12,18 +14,14 @@ export function EditarEmpresa() {
 
     useEffect(() => {
         if (dataempresa) {
-            reset({
-                nombre: dataempresa.nombre,
-                simbolomoneda: dataempresa.simbolomoneda,
-            });
+            reset(dataempresa);
         }
     }, [dataempresa, reset]);
 
     async function onSubmit(data) {
         const p = {
             id: dataempresa.id,
-            nombre: data.nombre,
-            simbolomoneda: data.simbolomoneda,
+            ...data
         };
         await editarEmpresa(p);
     }
@@ -34,7 +32,7 @@ export function EditarEmpresa() {
 
     return (
         <Container onSubmit={handleSubmit(onSubmit)}>
-            <InputText icono={<v.icononombre />}>
+            <InputText icono={<FaRegBuilding />}>
                 <input
                     className="form__field"
                     type="text"
@@ -56,8 +54,58 @@ export function EditarEmpresa() {
                 {errors.simbolomoneda && <p>Campo requerido</p>}
             </InputText>
 
+            <InputText icono={<AiOutlineBarcode />}>
+                <input
+                    className="form__field"
+                    type="text"
+                    placeholder="CUIT"
+                    {...register("cuit")}
+                />
+                <label className="form__label">CUIT</label>
+            </InputText>
+
+            <InputText icono={<FaMapMarkerAlt />}>
+                <input
+                    className="form__field"
+                    type="text"
+                    placeholder="Dirección"
+                    {...register("direccion")}
+                />
+                <label className="form__label">Dirección</label>
+            </InputText>
+
+            <InputText icono={<FaPhone />}>
+                <input
+                    className="form__field"
+                    type="text"
+                    placeholder="Teléfono"
+                    {...register("telefono")}
+                />
+                <label className="form__label">Teléfono</label>
+            </InputText>
+
+            <InputText icono={<FaBriefcase />}>
+                <input
+                    className="form__field"
+                    type="text"
+                    placeholder="Rubro"
+                    {...register("rubro")}
+                />
+                <label className="form__label">Rubro</label>
+            </InputText>
+
+            <InputText icono={<FaLink />}>
+                <input
+                    className="form__field"
+                    type="text"
+                    placeholder="URL del Logo"
+                    {...register("logo_url")}
+                />
+                <label className="form__label">URL del Logo</label>
+            </InputText>
+
             <div className="btnguardarContent">
-                <BtnSave titulo="Guardar" icono={<v.iconoguardar />} />
+                <BtnSave titulo="Guardar" icono={<v.iconoguardar />} bgcolor="#ef552b" />
             </div>
         </Container>
     );

@@ -20,12 +20,18 @@ import { TipoDocData } from "../../../utils/dataEstatica";
 import { TipouserData } from "../../../utils/dataEstatica";
 import { ListaModulos } from "../ListaModulos";
 import { useUsuariosStore } from "../../../store/UsuariosStore";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function RegistrarUsuarios({ onClose, dataSelect, accion }) {
+  const queryClient = useQueryClient();
+  const { idusuario, insertarusuarios, mostrarpermisosEdit, editarusuarios } =
+    useUsuariosStore();
+  const isSelfEdit = accion === "Editar" && dataSelect.id === idusuario;
+
   const { isLoading } = useQuery({
     queryKey: ["mostrar permisos Edit", { id_usuario: dataSelect.id }],
     queryFn: () => mostrarpermisosEdit({ id_usuario: dataSelect.id }),
+    enabled: accion === "Editar" && !!dataSelect.id,
   });
 
   const [checkboxs, setCheckboxs] = useState([]);
@@ -34,8 +40,7 @@ export function RegistrarUsuarios({ onClose, dataSelect, accion }) {
     icono: "",
     descripcion: "empleado",
   });
-  const { insertarusuarios, mostrarpermisosEdit, editarusuarios } =
-    useUsuariosStore();
+
   const { dataempresa } = useEmpresaStore();
   const { marcaItemSelect, datamarca, selectMarca } = useMarcaStore();
   const { categoriasItemSelect, datacategorias, selectcategorias } =
@@ -74,6 +79,8 @@ export function RegistrarUsuarios({ onClose, dataSelect, accion }) {
         tipodoc: tipodoc.descripcion,
       };
       await editarusuarios(p, checkboxs, dataempresa.id);
+      // Invalida la consulta para forzar la recarga de datos
+      queryClient.invalidateQueries({ queryKey: ["mostrar usuarios"] });
       onClose();
     } else {
       const p = {
@@ -278,6 +285,7 @@ export function RegistrarUsuarios({ onClose, dataSelect, accion }) {
               accion={accion}
               checkboxs={checkboxs}
               setCheckboxs={setCheckboxs}
+              disabled={isSelfEdit}
             />
           </section>
           <div className="btnguardarContent">

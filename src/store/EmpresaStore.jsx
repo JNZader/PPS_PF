@@ -4,11 +4,11 @@ import { ContarUsuariosXempresa, EditarEmpresa, MostrarEmpresa } from "../supaba
 export const useEmpresaStore = create((set, get) => ({
   contadorusuarios: 0,
   dataempresa: {},
-  parametros: {},
+  parametros: {}, // Guardamos los parámetros para poder recargar los datos
 
   mostrarEmpresa: async (p) => {
     try {
-      set({ parametros: p });
+      set({ parametros: p }); // Guardar los parámetros cada vez que se llama
       const response = await MostrarEmpresa(p);
       set({ dataempresa: response.empresa || {} });
       return response.empresa || {};
@@ -22,6 +22,7 @@ export const useEmpresaStore = create((set, get) => ({
   editarEmpresa: async (p) => {
     await EditarEmpresa(p);
     const { mostrarEmpresa, parametros } = get();
+    // Volvemos a cargar los datos con los últimos parámetros usados
     await mostrarEmpresa(parametros);
   },
 

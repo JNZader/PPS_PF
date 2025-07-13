@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useUsuariosStore } from "../../store/UsuariosStore";
 import { useEffect, useState } from "react";
 
-export function ListaModulos({ checkboxs, setCheckboxs, accion }) {
+export function ListaModulos({ checkboxs, setCheckboxs, accion, disabled }) {
   const { datamodulos, datapermisosEdit } = useUsuariosStore();
   const [isChecked, setisChecked] = useState(true);
 
@@ -10,22 +10,23 @@ export function ListaModulos({ checkboxs, setCheckboxs, accion }) {
     if (accion == "Editar") {
       let allDocs = [];
       datamodulos.map((element) => {
-        const statePermiso = datapermisosEdit?.some((objeto) =>
-          objeto.modulos.nombre.includes(element.nombre)
-        );
+        const statePermiso = datapermisosEdit?.some((objeto) => objeto.modulos.nombre.includes(element.nombre))
         if (statePermiso) {
-          allDocs.push({ ...element, check: true });
-        } else {
-          allDocs.push({ ...element, check: false });
+          allDocs.push({ ...element, check: true })
         }
-      });
-      setCheckboxs(allDocs);
+        else {
+          allDocs.push({ ...element, check: false })
+        }
+
+      })
+      setCheckboxs(allDocs)
+
     } else {
       setCheckboxs(datamodulos);
     }
   }, [datapermisosEdit]);
-
   const handlecheckbox = (id) => {
+    if (disabled) return;
     setCheckboxs((prev) => {
       return prev?.map((item) => {
         if (item.id === id) {
@@ -45,19 +46,15 @@ export function ListaModulos({ checkboxs, setCheckboxs, accion }) {
   };
 
   return (
-    <Container>
+    <Container disabled={disabled}>
       {checkboxs?.map((item, index) => {
         return (
-          <div
-            className="content"
-            key={index}
-            onClick={() => handlecheckbox(item.id)}
-          >
-            <input
-              checked={item.check}
-              className="checkbox"
+          <div className="content" key={index} onClick={() => handlecheckbox(item.id)}>
+            <input checked={item.check}
+              class="checkbox"
               type="checkbox"
               onChange={(e) => seleccionar(e)}
+              disabled={disabled}
             />
             <span>{item.nombre}</span>
           </div>
@@ -68,18 +65,22 @@ export function ListaModulos({ checkboxs, setCheckboxs, accion }) {
 }
 
 const Container = styled.div`
-  display: flex;
+ display: flex;
   flex-direction: column;
   border: 2px dashed #414244;
   border-radius: 15px;
   padding: 20px;
   gap: 15px;
-
-  .content {
+  ${(props) =>
+    props.disabled &&
+    `
+    opacity: 0.5;
+    pointer-events: none;
+  `}
+.content{
     display: flex;
     gap: 20px;
-  }
-
+}
   .checkbox {
     appearance: none;
     overflow: hidden;
@@ -89,7 +90,6 @@ const Container = styled.div`
     border: 2px solid rgb(255, 102, 0);
     position: relative;
     transition: all 0.2s ease-in-out;
-
     &::before {
       position: absolute;
       inset: 0;
@@ -97,7 +97,6 @@ const Container = styled.div`
       font-size: 35px;
       transition: all 0.2s ease-in-out;
     }
-
     &:checked {
       border: 2px solid rgb(255, 212, 59);
       background: linear-gradient(
@@ -107,7 +106,6 @@ const Container = styled.div`
       );
       box-shadow: -5px -5px 30px rgba(255, 212, 59, 1),
         5px 5px 30px rgba(255, 102, 0, 1);
-      
       &::before {
         background: linear-gradient(
           135deg,
