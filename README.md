@@ -66,8 +66,8 @@ Sigue estos pasos para ejecutar el proyecto en tu entorno local:
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/jnzader/pf_pps.git](https://github.com/jnzader/pf_pps.git)
-    cd pf_pps
+    git clone [https://github.com/jnzader/pf_pps.git](https://github.com/jnzader/pps_pf.git)
+    cd pps_pf
     ```
 
 2.  **Instalar dependencias:**
