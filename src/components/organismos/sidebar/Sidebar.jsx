@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {
   LinksArray,
   SecondarylinksArray,
+  AboutUsLinksArray,
 } from "../../../utils/dataEstatica";
 import { ToggleTema } from "../ToggleTema";
 import { SidebarCard } from "../sidebar/SidebarCard";
@@ -39,6 +40,23 @@ export function Sidebar({ state, setState }) {
         ))}
         <Divider />
         {SecondarylinksArray.map(({ icon, label, to }) => (
+          <div
+            className={state ? "LinkContainer active" : "LinkContainer"}
+            key={label}
+          >
+            <NavLink
+              to={to}
+              className={({ isActive }) => `Links${isActive ? ` active` : ``}`}
+            >
+              <div className="Linkicon">{icon}</div>
+              <span className={state ? "label_ver" : "label_oculto"}>
+                {label}
+              </span>
+            </NavLink>
+          </div>
+        ))}
+        <Divider />
+        {AboutUsLinksArray.map(({ icon, label, to }) => (
           <div
             className={state ? "LinkContainer active" : "LinkContainer"}
             key={label}

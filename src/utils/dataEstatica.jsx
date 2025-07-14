@@ -2,6 +2,8 @@ import { v } from "../styles/variables";
 import {
   AiOutlineHome,
   AiOutlineSetting,
+  AiOutlineFile,
+  AiOutlineFileText,
 } from "react-icons/ai";
 
 export const DesplegableUser = [
@@ -22,8 +24,6 @@ export const DesplegableUser = [
   },
 ];
 
-
-
 //data SIDEBAR
 export const LinksArray = [
   {
@@ -40,16 +40,28 @@ export const LinksArray = [
     label: "Reportes",
     icon: <v.iconoreportes />,
     to: "/reportes",
-  },
- 
+  }, 
 ];
+
 export const SecondarylinksArray = [
   {
     label: "Configuración",
     icon: <AiOutlineSetting />,
     to: "/configurar",
   },
+];
 
+export const AboutUsLinksArray=[
+  {
+    label: "Presentación",
+    icon: <AiOutlineFile />,
+    to: "/sobre-nosotros/presentacion",
+  },
+  {
+    label:"Documentación",
+    icon: <AiOutlineFileText />,
+    to: "/sobre-nosotros/documentacion",
+  },
 ];
 //temas
 export const TemasData = [

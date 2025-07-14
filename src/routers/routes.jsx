@@ -1,3 +1,4 @@
+// src/routers/routes.jsx
 import { Routes, Route } from "react-router-dom";
 import { Home } from "../pages/Home";
 import { Login } from "../pages/Login"
@@ -22,8 +23,13 @@ import StockBajoMinimo from "../components/organismos/report/StockBajoMinino";
 import KardexEntradaSalida from "../components/organismos/report/KardexEntradaSalida"
 import StockInventarioValorado from "../components/organismos/report/StockInventarioValorado";
 import { Layout } from "../hooks/Layout";
+import { FileViewer } from "../pages/FileViewer";
+
+import docHtmlUrl from '../assets/doc.html?url';
 
 export function MyRoutes() {
+
+  const googleSlidesEmbedUrl = "https://docs.google.com/presentation/d/1ADwWbSfiLTwJZnNQJNVButtFvC57GLIDpwHCpOdFH9k/embed?start=false&loop=false&delayms=3000";
 
   return (
     <Routes>
@@ -90,6 +96,24 @@ export function MyRoutes() {
         <Route path="kardex-entradas-salidas" element={<KardexEntradaSalida />} />
         <Route path="inventario-valorado" element={<StockInventarioValorado />} />
       </Route>
+
+      <Route path="/sobre-nosotros/presentacion" element={<ProtectedRoute accessBy="authenticated">
+        <Layout>
+          <FileViewer
+            fileUrl={googleSlidesEmbedUrl}
+            fileType="pptx_google"
+          />
+        </Layout>
+      </ProtectedRoute>} />
+
+      <Route path="/sobre-nosotros/documentacion" element={<ProtectedRoute accessBy="authenticated">
+        <Layout>
+          <FileViewer
+            fileUrl={docHtmlUrl}
+            fileType="html"
+          />
+        </Layout>
+      </ProtectedRoute>} />
     </Routes>
   );
 }

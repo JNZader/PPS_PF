@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Fernandez, Santino">
+<meta name="author" content="Collins, Cristian Horacio">
+<meta name="author" content="Zych, Marcelo Orlando">
+<meta name="author" content="Zader, Javier Norberto">
+
+<title>Documento de Diseño y Desarrollo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="doc_files/libs/clipboard/clipboard.min.js"></script>
+<script src="doc_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="doc_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="doc_files/libs/quarto-html/popper.min.js"></script>
+<script src="doc_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="doc_files/libs/quarto-html/anchor.min.js"></script>
+<link href="doc_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="doc_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="doc_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="doc_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="doc_files/libs/bootstrap/bootstrap-3d8c226176b3f49194468f9ac3898c12.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="doc_files/libs/quarto-diagram/mermaid.min.js"></script>
+<script src="doc_files/libs/quarto-diagram/mermaid-init.js"></script>
+<link href="doc_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">1</span> Introducción</a>
+  <ul class="collapse">
+  <li><a href="#nombre-del-proyecto" id="toc-nombre-del-proyecto" class="nav-link" data-scroll-target="#nombre-del-proyecto"><span class="header-section-number">1.1</span> Nombre del Proyecto</a></li>
+  <li><a href="#resumen-ejecutivo" id="toc-resumen-ejecutivo" class="nav-link" data-scroll-target="#resumen-ejecutivo"><span class="header-section-number">1.2</span> Resumen Ejecutivo</a></li>
+  <li><a href="#potencial-cliente" id="toc-potencial-cliente" class="nav-link" data-scroll-target="#potencial-cliente"><span class="header-section-number">1.3</span> Potencial Cliente</a></li>
+  <li><a href="#descripción-del-proyecto" id="toc-descripción-del-proyecto" class="nav-link" data-scroll-target="#descripción-del-proyecto"><span class="header-section-number">1.4</span> Descripción del Proyecto</a></li>
+  <li><a href="#contexto-del-problema" id="toc-contexto-del-problema" class="nav-link" data-scroll-target="#contexto-del-problema"><span class="header-section-number">1.5</span> Contexto del Problema</a></li>
+  </ul></li>
+  <li><a href="#objetivo-general" id="toc-objetivo-general" class="nav-link" data-scroll-target="#objetivo-general"><span class="header-section-number">2</span> Objetivo General</a></li>
+  <li><a href="#justificación-y-relevancia" id="toc-justificación-y-relevancia" class="nav-link" data-scroll-target="#justificación-y-relevancia"><span class="header-section-number">3</span> Justificación y Relevancia</a></li>
+  <li><a href="#definición-de-alcances-y-requisitos" id="toc-definición-de-alcances-y-requisitos" class="nav-link" data-scroll-target="#definición-de-alcances-y-requisitos"><span class="header-section-number">4</span> Definición de Alcances y Requisitos</a>
+  <ul class="collapse">
+  <li><a href="#alcance-del-proyecto" id="toc-alcance-del-proyecto" class="nav-link" data-scroll-target="#alcance-del-proyecto"><span class="header-section-number">4.1</span> Alcance del Proyecto</a>
+  <ul class="collapse">
+  <li><a href="#funcionalidades-principales-incluidas" id="toc-funcionalidades-principales-incluidas" class="nav-link" data-scroll-target="#funcionalidades-principales-incluidas"><span class="header-section-number">4.1.1</span> Funcionalidades Principales Incluidas</a></li>
+  <li><a href="#público-objetivo" id="toc-público-objetivo" class="nav-link" data-scroll-target="#público-objetivo"><span class="header-section-number">4.1.2</span> Público Objetivo</a></li>
+  <li><a href="#plataformas-y-disponibilidad" id="toc-plataformas-y-disponibilidad" class="nav-link" data-scroll-target="#plataformas-y-disponibilidad"><span class="header-section-number">4.1.3</span> Plataformas y Disponibilidad</a></li>
+  <li><a href="#limitaciones-o-exclusiones" id="toc-limitaciones-o-exclusiones" class="nav-link" data-scroll-target="#limitaciones-o-exclusiones"><span class="header-section-number">4.1.4</span> Limitaciones o Exclusiones</a></li>
+  </ul></li>
+  <li><a href="#requisitos-funcionales" id="toc-requisitos-funcionales" class="nav-link" data-scroll-target="#requisitos-funcionales"><span class="header-section-number">4.2</span> Requisitos Funcionales</a>
+  <ul class="collapse">
+  <li><a href="#casos-de-uso" id="toc-casos-de-uso" class="nav-link" data-scroll-target="#casos-de-uso"><span class="header-section-number">4.2.1</span> Casos de Uso</a></li>
+  </ul></li>
+  <li><a href="#requisitos-no-funcionales" id="toc-requisitos-no-funcionales" class="nav-link" data-scroll-target="#requisitos-no-funcionales"><span class="header-section-number">4.3</span> Requisitos No Funcionales</a></li>
+  </ul></li>
+  <li><a href="#diseño-del-sistema" id="toc-diseño-del-sistema" class="nav-link" data-scroll-target="#diseño-del-sistema"><span class="header-section-number">5</span> Diseño del Sistema</a>
+  <ul class="collapse">
+  <li><a href="#arquitectura-general" id="toc-arquitectura-general" class="nav-link" data-scroll-target="#arquitectura-general"><span class="header-section-number">5.1</span> Arquitectura General</a></li>
+  <li><a href="#diagramas-de-secuencia" id="toc-diagramas-de-secuencia" class="nav-link" data-scroll-target="#diagramas-de-secuencia"><span class="header-section-number">5.2</span> Diagramas de Secuencia</a></li>
+  <li><a href="#diagrama-de-clases-del-dominio" id="toc-diagrama-de-clases-del-dominio" class="nav-link" data-scroll-target="#diagrama-de-clases-del-dominio"><span class="header-section-number">5.3</span> Diagrama de Clases del Dominio</a></li>
+  <li><a href="#diseño-de-base-de-datos-der" id="toc-diseño-de-base-de-datos-der" class="nav-link" data-scroll-target="#diseño-de-base-de-datos-der"><span class="header-section-number">5.4</span> Diseño de Base de Datos (DER)</a></li>
+  </ul></li>
+  <li><a href="#tecnologías-utilizadas" id="toc-tecnologías-utilizadas" class="nav-link" data-scroll-target="#tecnologías-utilizadas"><span class="header-section-number">6</span> Tecnologías Utilizadas</a>
+  <ul class="collapse">
+  <li><a href="#frontend" id="toc-frontend" class="nav-link" data-scroll-target="#frontend"><span class="header-section-number">6.1</span> Frontend</a></li>
+  <li><a href="#backend-baas" id="toc-backend-baas" class="nav-link" data-scroll-target="#backend-baas"><span class="header-section-number">6.2</span> Backend (BaaS)</a></li>
+  <li><a href="#librerías-adicionales" id="toc-librerías-adicionales" class="nav-link" data-scroll-target="#librerías-adicionales"><span class="header-section-number">6.3</span> Librerías Adicionales</a></li>
+  </ul></li>
+  <li><a href="#diseño-de-base-de-datos-expandido" id="toc-diseño-de-base-de-datos-expandido" class="nav-link" data-scroll-target="#diseño-de-base-de-datos-expandido"><span class="header-section-number">7</span> Diseño de Base de Datos (Expandido)</a>
+  <ul class="collapse">
+  <li><a href="#descripción-detallada-de-tablas" id="toc-descripción-detallada-de-tablas" class="nav-link" data-scroll-target="#descripción-detallada-de-tablas"><span class="header-section-number">7.1</span> Descripción Detallada de Tablas</a>
+  <ul class="collapse">
+  <li><a href="#tabla-usuarios" id="toc-tabla-usuarios" class="nav-link" data-scroll-target="#tabla-usuarios"><span class="header-section-number">7.1.1</span> Tabla <code>usuarios</code></a></li>
+  <li><a href="#tabla-empresa" id="toc-tabla-empresa" class="nav-link" data-scroll-target="#tabla-empresa"><span class="header-section-number">7.1.2</span> Tabla <code>empresa</code></a></li>
+  <li><a href="#tabla-productos" id="toc-tabla-productos" class="nav-link" data-scroll-target="#tabla-productos"><span class="header-section-number">7.1.3</span> Tabla <code>productos</code></a></li>
+  <li><a href="#tabla-kardex" id="toc-tabla-kardex" class="nav-link" data-scroll-target="#tabla-kardex"><span class="header-section-number">7.1.4</span> Tabla <code>kardex</code></a></li>
+  </ul></li>
+  <li><a href="#funciones-y-procedimientos-almacenados" id="toc-funciones-y-procedimientos-almacenados" class="nav-link" data-scroll-target="#funciones-y-procedimientos-almacenados"><span class="header-section-number">7.2</span> Funciones y Procedimientos Almacenados</a>
+  <ul class="collapse">
+  <li><a href="#funciones-de-búsqueda-y-consulta" id="toc-funciones-de-búsqueda-y-consulta" class="nav-link" data-scroll-target="#funciones-de-búsqueda-y-consulta"><span class="header-section-number">7.2.1</span> Funciones de Búsqueda y Consulta</a></li>
+  <li><a href="#funciones-de-inserción-con-validación" id="toc-funciones-de-inserción-con-validación" class="nav-link" data-scroll-target="#funciones-de-inserción-con-validación"><span class="header-section-number">7.2.2</span> Funciones de Inserción con Validación</a></li>
+  </ul></li>
+  <li><a href="#triggers-y-automatización" id="toc-triggers-y-automatización" class="nav-link" data-scroll-target="#triggers-y-automatización"><span class="header-section-number">7.3</span> Triggers y Automatización</a>
+  <ul class="collapse">
+  <li><a href="#modificarstock-after-insert-on-kardex" id="toc-modificarstock-after-insert-on-kardex" class="nav-link" data-scroll-target="#modificarstock-after-insert-on-kardex"><span class="header-section-number">7.3.1</span> <code>modificarstock</code> (AFTER INSERT ON kardex)</a></li>
+  <li><a href="#insertpermisos-after-insert-on-usuarios" id="toc-insertpermisos-after-insert-on-usuarios" class="nav-link" data-scroll-target="#insertpermisos-after-insert-on-usuarios"><span class="header-section-number">7.3.2</span> <code>insertpermisos</code> (AFTER INSERT ON usuarios)</a></li>
+  <li><a href="#insertpordefecto-after-insert-on-empresa" id="toc-insertpordefecto-after-insert-on-empresa" class="nav-link" data-scroll-target="#insertpordefecto-after-insert-on-empresa"><span class="header-section-number">7.3.3</span> <code>insertpordefecto</code> (AFTER INSERT ON empresa)</a></li>
+  <li><a href="#eliminarkardextrigger-before-delete-on-kardex" id="toc-eliminarkardextrigger-before-delete-on-kardex" class="nav-link" data-scroll-target="#eliminarkardextrigger-before-delete-on-kardex"><span class="header-section-number">7.3.4</span> <code>eliminarkardextrigger</code> (BEFORE DELETE ON kardex)</a></li>
+  </ul></li>
+  <li><a href="#políticas-de-seguridad-rls---row-level-security" id="toc-políticas-de-seguridad-rls---row-level-security" class="nav-link" data-scroll-target="#políticas-de-seguridad-rls---row-level-security"><span class="header-section-number">7.4</span> Políticas de Seguridad (RLS - Row Level Security)</a>
+  <ul class="collapse">
+  <li><a href="#políticas-de-lectura-select" id="toc-políticas-de-lectura-select" class="nav-link" data-scroll-target="#políticas-de-lectura-select"><span class="header-section-number">7.4.1</span> Políticas de Lectura (SELECT)</a></li>
+  <li><a href="#políticas-de-escritura-insertupdatedelete" id="toc-políticas-de-escritura-insertupdatedelete" class="nav-link" data-scroll-target="#políticas-de-escritura-insertupdatedelete"><span class="header-section-number">7.4.2</span> Políticas de Escritura (INSERT/UPDATE/DELETE)</a></li>
+  </ul></li>
+  <li><a href="#índices-y-optimización" id="toc-índices-y-optimización" class="nav-link" data-scroll-target="#índices-y-optimización"><span class="header-section-number">7.5</span> Índices y Optimización</a>
+  <ul class="collapse">
+  <li><a href="#índices" id="toc-índices" class="nav-link" data-scroll-target="#índices"><span class="header-section-number">7.5.1</span> Índices</a></li>
+  </ul></li>
+  <li><a href="#integridad-y-consistencia" id="toc-integridad-y-consistencia" class="nav-link" data-scroll-target="#integridad-y-consistencia"><span class="header-section-number">7.6</span> Integridad y Consistencia</a>
+  <ul class="collapse">
+  <li><a href="#restricciones-de-integridad-referencial" id="toc-restricciones-de-integridad-referencial" class="nav-link" data-scroll-target="#restricciones-de-integridad-referencial"><span class="header-section-number">7.6.1</span> Restricciones de Integridad Referencial</a></li>
+  <li><a href="#auditoria-y-trazabilidad" id="toc-auditoria-y-trazabilidad" class="nav-link" data-scroll-target="#auditoria-y-trazabilidad"><span class="header-section-number">7.6.2</span> Auditoria y Trazabilidad</a></li>
+  </ul></li>
+  <li><a href="#escalabilidad-y-mantenimiento" id="toc-escalabilidad-y-mantenimiento" class="nav-link" data-scroll-target="#escalabilidad-y-mantenimiento"><span class="header-section-number">7.7</span> Escalabilidad y Mantenimiento</a>
+  <ul class="collapse">
+  <li><a href="#diseño-multi-tenant" id="toc-diseño-multi-tenant" class="nav-link" data-scroll-target="#diseño-multi-tenant"><span class="header-section-number">7.7.1</span> Diseño Multi-tenant</a></li>
+  <li><a href="#extensibilidad" id="toc-extensibilidad" class="nav-link" data-scroll-target="#extensibilidad"><span class="header-section-number">7.7.2</span> Extensibilidad</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#implementación-del-sistema" id="toc-implementación-del-sistema" class="nav-link" data-scroll-target="#implementación-del-sistema"><span class="header-section-number">8</span> Implementación del Sistema</a>
+  <ul class="collapse">
+  <li><a href="#arquitectura-del-sistema" id="toc-arquitectura-del-sistema" class="nav-link" data-scroll-target="#arquitectura-del-sistema"><span class="header-section-number">8.1</span> Arquitectura del Sistema</a></li>
+  <li><a href="#patrones-de-diseño-implementados" id="toc-patrones-de-diseño-implementados" class="nav-link" data-scroll-target="#patrones-de-diseño-implementados"><span class="header-section-number">8.2</span> Patrones de Diseño Implementados</a>
+  <ul class="collapse">
+  <li><a href="#patrones-de-arquitectura-y-estado" id="toc-patrones-de-arquitectura-y-estado" class="nav-link" data-scroll-target="#patrones-de-arquitectura-y-estado"><span class="header-section-number">8.2.1</span> Patrones de Arquitectura y Estado</a></li>
+  <li><a href="#atomic-design-para-la-arquitectura-de-componentes" id="toc-atomic-design-para-la-arquitectura-de-componentes" class="nav-link" data-scroll-target="#atomic-design-para-la-arquitectura-de-componentes"><span class="header-section-number">8.2.2</span> Atomic Design para la Arquitectura de Componentes</a></li>
+  </ul></li>
+  <li><a href="#seguridad-implementada" id="toc-seguridad-implementada" class="nav-link" data-scroll-target="#seguridad-implementada"><span class="header-section-number">8.3</span> Seguridad Implementada</a>
+  <ul class="collapse">
+  <li><a href="#autenticación-y-autorización" id="toc-autenticación-y-autorización" class="nav-link" data-scroll-target="#autenticación-y-autorización"><span class="header-section-number">8.3.1</span> Autenticación y Autorización</a></li>
+  <li><a href="#validación-de-datos" id="toc-validación-de-datos" class="nav-link" data-scroll-target="#validación-de-datos"><span class="header-section-number">8.3.2</span> Validación de Datos</a></li>
+  </ul></li>
+  <li><a href="#performance-y-optimización" id="toc-performance-y-optimización" class="nav-link" data-scroll-target="#performance-y-optimización"><span class="header-section-number">8.4</span> Performance y Optimización</a>
+  <ul class="collapse">
+  <li><a href="#optimizaciones-del-frontend" id="toc-optimizaciones-del-frontend" class="nav-link" data-scroll-target="#optimizaciones-del-frontend"><span class="header-section-number">8.4.1</span> Optimizaciones del Frontend</a></li>
+  <li><a href="#optimizaciones-del-backend" id="toc-optimizaciones-del-backend" class="nav-link" data-scroll-target="#optimizaciones-del-backend"><span class="header-section-number">8.4.2</span> Optimizaciones del Backend</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones"><span class="header-section-number">9</span> Conclusiones</a>
+  <ul class="collapse">
+  <li><a href="#logros-alcanzados" id="toc-logros-alcanzados" class="nav-link" data-scroll-target="#logros-alcanzados"><span class="header-section-number">9.1</span> Logros Alcanzados</a></li>
+  <li><a href="#lecciones-aprendidas" id="toc-lecciones-aprendidas" class="nav-link" data-scroll-target="#lecciones-aprendidas"><span class="header-section-number">9.2</span> Lecciones Aprendidas</a></li>
+  <li><a href="#impacto-esperado" id="toc-impacto-esperado" class="nav-link" data-scroll-target="#impacto-esperado"><span class="header-section-number">9.3</span> Impacto Esperado</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Documento de Diseño y Desarrollo</h1>
+<p class="subtitle lead">FiveStock</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autores/as</div>
+    <div class="quarto-title-meta-contents">
+             <p>Fernandez, Santino </p>
+             <p>Collins, Cristian Horacio </p>
+             <p>Zych, Marcelo Orlando </p>
+             <p>Zader, Javier Norberto </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">14 de julio de 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introducción</h1>
+<section id="nombre-del-proyecto" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="nombre-del-proyecto"><span class="header-section-number">1.1</span> Nombre del Proyecto</h2>
+<p>FiveStock</p>
+</section>
+<section id="resumen-ejecutivo" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="resumen-ejecutivo"><span class="header-section-number">1.2</span> Resumen Ejecutivo</h2>
+<p>FiveStock es una plataforma web diseñada para optimizar la gestión de inventarios en pequeñas y medianas empresas (PyMEs), con un enfoque inicial en el reparto de agua embotellada, pero adaptable a diversos modelos de negocio. Utilizando Supabase, ofrece una solución escalable, segura y fácil de usar para automatizar procesos, reducir errores y mejorar la toma de decisiones.</p>
+</section>
+<section id="potencial-cliente" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="potencial-cliente"><span class="header-section-number">1.3</span> Potencial Cliente</h2>
+<p>El proyecto se originó para atender las necesidades de un negocio de reparto de agua embotellada, pero su diseño flexible permite adaptarlo a una amplia gama de PyMEs, incluyendo tiendas minoristas, supermercados de barrio y distribuidores de productos físicos. La plataforma está dirigida a empresas que buscan una solución moderna y económica para gestionar sus inventarios sin recurrir a software propietario costoso.</p>
+</section>
+<section id="descripción-del-proyecto" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="descripción-del-proyecto"><span class="header-section-number">1.4</span> Descripción del Proyecto</h2>
+<p>FiveStock es una plataforma web robusta que centraliza la gestión de inventarios, integrando módulos para la administración de productos, personal, movimientos de inventario (Kardex) y reportes en PDF. Construida sobre Supabase, aprovecha una base de datos PostgreSQL, autenticación segura con JWT y políticas de seguridad a nivel de fila (RLS). La aplicación es responsiva, compatible con navegadores modernos y dispositivos móviles, y está diseñada para reducir la carga operativa de las PyMEs mediante la automatización de procesos clave, minimizando errores humanos y facilitando la generación de informes detallados.</p>
+</section>
+<section id="contexto-del-problema" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="contexto-del-problema"><span class="header-section-number">1.5</span> Contexto del Problema</h2>
+<p>Las PyMEs lidian con múltiples desafíos en la gestión de inventarios: errores frecuentes al controlar el stock, tareas manuales que consumen tiempo y ausencia de herramientas ágiles para obtener información confiable al instante. Esta falta de control reduce la rentabilidad y frena el crecimiento. FiveStock transforma este escenario con una plataforma intuitiva y flexible que automatiza procesos clave, minimiza errores y potencia la competitividad de tu negocio.</p>
+</section>
+</section>
+<section id="objetivo-general" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Objetivo General</h1>
+<p>Desarrollar una plataforma web para la gestión de inventario, utilizando Supabase, que permita validar el modelo de negocio en un plazo de 3 meses.</p>
+</section>
+<section id="justificación-y-relevancia" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Justificación y Relevancia</h1>
+<p>Las empresas de venta y distribución de productos físicos enfrentan desafíos significativos en la gestión de inventarios. Un sistema de control de inventario bien estructurado es fundamental para:</p>
+<ul>
+<li><strong>Mejorar la eficiencia operativa</strong>: Automatiza procesos clave como el seguimiento de stock, registro de ventas y compras, reduciendo la carga de trabajo manual.</li>
+<li><strong>Reducir errores humanos</strong>: Minimiza las imprecisiones en la gestión de pedidos y el control de existencias, lo que conduce a una mejor toma de decisiones.</li>
+</ul>
+<p>Esta plataforma busca ofrecer una alternativa flexible, moderna y accesible para las PyMEs que no pueden permitirse soluciones de software más costosas y complejas, proporcionando herramientas esenciales para optimizar su operación diaria.</p>
+</section>
+<section id="definición-de-alcances-y-requisitos" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Definición de Alcances y Requisitos</h1>
+<section id="alcance-del-proyecto" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="alcance-del-proyecto"><span class="header-section-number">4.1</span> Alcance del Proyecto</h2>
+<section id="funcionalidades-principales-incluidas" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="funcionalidades-principales-incluidas"><span class="header-section-number">4.1.1</span> Funcionalidades Principales Incluidas</h3>
+<ul>
+<li><strong>Gestión de Usuarios y Autenticación</strong>: Sistema de registro, inicio de sesión y manejo de permisos por roles (Super Administrador, Administrador, Empleado).</li>
+<li><strong>Módulo de Configuración</strong>: Permite la gestión de Productos, Personal, Empresa, Categorías y Marcas, con acceso restringido por permisos.</li>
+<li><strong>Control de Inventario (Kardex)</strong>: CRUD completo para productos, seguimiento detallado de entradas y salidas con información de usuario, fecha y motivo.</li>
+<li><strong>Generación de Reportes</strong>: Creación de informes en formato PDF para visualizar el stock actual (total y por producto), productos con stock bajo el mínimo, Kardex detallado por producto e inventario valorizado.</li>
+<li><strong>Personalización de la Interfaz</strong>: Soporte para tema claro y oscuro para adaptarse a las preferencias del usuario.</li>
+</ul>
+</section>
+<section id="público-objetivo" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="público-objetivo"><span class="header-section-number">4.1.2</span> Público Objetivo</h3>
+<ul>
+<li>Pequeñas y medianas empresas (PyMEs).</li>
+<li>Empresas de reparto de agua embotellada.</li>
+<li>Tiendas y supermercados de barrio.</li>
+</ul>
+</section>
+<section id="plataformas-y-disponibilidad" class="level3" data-number="4.1.3">
+<h3 data-number="4.1.3" class="anchored" data-anchor-id="plataformas-y-disponibilidad"><span class="header-section-number">4.1.3</span> Plataformas y Disponibilidad</h3>
+<ul>
+<li><strong>Aplicación Web</strong>: Accesible desde navegadores modernos (Chrome, Firefox, Safari).</li>
+<li><strong>Diseño Responsivo</strong>: Correcta visualización y funcionalidad en dispositivos móviles, tabletas y de escritorio.</li>
+</ul>
+</section>
+<section id="limitaciones-o-exclusiones" class="level3" data-number="4.1.4">
+<h3 data-number="4.1.4" class="anchored" data-anchor-id="limitaciones-o-exclusiones"><span class="header-section-number">4.1.4</span> Limitaciones o Exclusiones</h3>
+<ul>
+<li>No se desarrollará una versión de escritorio nativa ni una aplicación móvil nativa.</li>
+<li>No se incluirán pasarelas de pago.</li>
+<li>No se integrará con sistemas de facturación electrónica (por ejemplo, AFIP).</li>
+<li>No se gestionarán rutas de reparto ni se integrará con sistemas de logística externa.</li>
+</ul>
+</section>
+</section>
+<section id="requisitos-funcionales" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="requisitos-funcionales"><span class="header-section-number">4.2</span> Requisitos Funcionales</h2>
+<section id="casos-de-uso" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="casos-de-uso"><span class="header-section-number">4.2.1</span> Casos de Uso</h3>
+<section id="iniciar-sesión" class="level4" data-number="4.2.1.1">
+<h4 data-number="4.2.1.1" class="anchored" data-anchor-id="iniciar-sesión"><span class="header-section-number">4.2.1.1</span> Iniciar Sesión</h4>
+<ul>
+<li><strong>Actor</strong>: Super Administrador, Administrador, Empleado.</li>
+<li><strong>Precondición</strong>: El usuario debe tener una cuenta activa en el sistema.</li>
+<li><strong>Flujo</strong>:
+<ol type="1">
+<li>El usuario navega a la página de inicio de sesión (<code>/login</code>).</li>
+<li>Ingresa su correo electrónico y contraseña en el formulario.</li>
+<li>El sistema utiliza la función <code>signInWithEmail</code> del <code>AuthStore</code> para validar las credenciales contra Supabase Auth.</li>
+<li>Si las credenciales son válidas, se genera un token JWT y se redirige al usuario al panel principal (<code>/</code>).</li>
+<li>Si no son válidas, se muestra un mensaje de error en la interfaz.</li>
+</ol></li>
+<li><strong>Tablas Involucradas</strong>: <code>auth.users</code>, <code>usuarios</code>.</li>
+</ul>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">sequenceDiagram
+    participant U as Usuario
+    participant F as Frontend (React)
+    participant S as SupabaseAuth
+    participant B as BaseDatos (PostgreSQL)
+    U-&gt;&gt;F: Navega a /login
+    U-&gt;&gt;F: Ingresa email y contraseña
+    F-&gt;&gt;S: Llama a signInWithPassword(email, pass)
+    S-&gt;&gt;B: Valida credenciales en auth.users
+    alt Credenciales Válidas
+        B--&gt;&gt;S: Retorna sesión con Token JWT
+        S--&gt;&gt;F: Éxito, retorna datos del usuario
+        F-&gt;&gt;F: Almacena sesión y redirige a /
+    else Credenciales Inválidas
+        B--&gt;&gt;S: Error de autenticación
+        S--&gt;&gt;F: Retorna error
+        F-&gt;&gt;U: Muestra mensaje de "Datos incorrectos"
+    end
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="registrar-un-producto-nuevo" class="level4" data-number="4.2.1.2">
+<h4 data-number="4.2.1.2" class="anchored" data-anchor-id="registrar-un-producto-nuevo"><span class="header-section-number">4.2.1.2</span> Registrar un Producto Nuevo</h4>
+<ul>
+<li><strong>Actor</strong>: Super Administrador, Administrador.</li>
+<li><strong>Precondición</strong>: El usuario debe tener permisos para acceder al módulo de productos.</li>
+<li><strong>Flujo</strong>:
+<ol type="1">
+<li>El usuario navega a <code>/configurar/productos</code>.</li>
+<li>Abre el modal de registro de productos.</li>
+<li>Completa el formulario con los datos del producto: descripción, stock, stock mínimo, precio de compra y venta, etc.</li>
+<li>Selecciona una categoría y una marca de las listas disponibles.</li>
+<li>Al guardar, se invoca la función <code>insertarproductos</code> que llama a la RPC de Supabase <code>insertarproductos</code> para persistir los datos.</li>
+<li>El sistema actualiza la tabla de productos en la interfaz.</li>
+</ol></li>
+<li><strong>Tablas Involucradas</strong>: <code>productos</code>, <code>categorias</code>, <code>marca</code>.</li>
+</ul>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">sequenceDiagram
+    participant A as Administrador
+    participant F as Frontend (React)
+    participant R as SupabaseRPC
+    participant B as BaseDatos (PostgreSQL)
+    A-&gt;&gt;F: Navega a /configurar/productos
+    A-&gt;&gt;F: Completa formulario de nuevo producto
+    F-&gt;&gt;R: Llama a RPC "insertarproductos" con datos
+    R-&gt;&gt;B: Ejecuta INSERT en la tabla "productos"
+    alt Éxito
+        B--&gt;&gt;R: Confirmación
+        R--&gt;&gt;F: Producto creado exitosamente
+        F-&gt;&gt;F: Actualiza el estado local (Zustand) y refresca la UI
+    else Error (ej. producto duplicado)
+        B--&gt;&gt;R: Retorna excepción de 'Datos duplicados'
+        R--&gt;&gt;F: Retorna mensaje de error
+        F-&gt;&gt;A: Muestra alerta de error
+    end
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="registrar-movimiento-en-kardex" class="level4" data-number="4.2.1.3">
+<h4 data-number="4.2.1.3" class="anchored" data-anchor-id="registrar-movimiento-en-kardex"><span class="header-section-number">4.2.1.3</span> Registrar Movimiento en Kardex</h4>
+<ul>
+<li><strong>Actor</strong>: Super Administrador, Administrador, Empleado.</li>
+<li><strong>Precondición</strong>: El usuario debe tener acceso al módulo de Kardex.</li>
+<li><strong>Flujo</strong>:
+<ol type="1">
+<li>El usuario navega a la página <code>/kardex</code>.</li>
+<li>Hace clic en el botón “+ Entrada” o “- Salida”.</li>
+<li>En el modal, busca y selecciona el producto afectado.</li>
+<li>Ingresa la cantidad y un motivo o detalle para el movimiento.</li>
+<li>Al guardar, se realiza un <code>INSERT</code> en la tabla <code>kardex</code>.</li>
+<li>Un <strong>trigger</strong> (<code>modificarstock</code>) en la base de datos se dispara automáticamente para actualizar el campo <code>stock</code> en la tabla <code>productos</code>. Si es una salida y el stock es insuficiente, la base de datos devuelve un error.</li>
+</ol></li>
+<li><strong>Tablas Involucradas</strong>: <code>kardex</code>, <code>productos</code>.</li>
+</ul>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">sequenceDiagram
+    participant E as Empleado
+    participant F as Frontend (React)
+    participant A as SupabaseAPI
+    participant B as BaseDatos (PostgreSQL)
+    E-&gt;&gt;F: Navega a /kardex
+    E-&gt;&gt;F: Selecciona "+ Entrada" o "- Salida"
+    E-&gt;&gt;F: Completa formulario de movimiento
+    F-&gt;&gt;A: Llama a INSERT en tabla "kardex"
+    A-&gt;&gt;B: Ejecuta INSERT y dispara trigger "modificarstock"
+    alt Stock Suficiente
+        B-&gt;&gt;B: UPDATE en tabla "productos" (stock +/- cantidad)
+        B--&gt;&gt;A: Confirmación
+        A--&gt;&gt;F: Movimiento registrado
+        F-&gt;&gt;E: Muestra confirmación
+    else Stock Insuficiente (para salidas)
+        B--&gt;&gt;A: Lanza excepción 'Stock agotado'
+        A--&gt;&gt;F: Retorna error
+        F-&gt;&gt;E: Muestra alerta de stock insuficiente
+    end
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="requisitos-no-funcionales" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="requisitos-no-funcionales"><span class="header-section-number">4.3</span> Requisitos No Funcionales</h2>
+<ul>
+<li><strong>Rendimiento</strong>: Las consultas a la base de datos y la carga de páginas deben completarse en menos de 3 segundos en condiciones de red estándar.</li>
+<li><strong>Usabilidad</strong>: Un usuario debe poder registrar un nuevo producto en menos de 5 clics desde el dashboard.</li>
+<li><strong>Seguridad</strong>: La autenticación se maneja con tokens JWT gestionados por Supabase. El acceso a los datos se restringe mediante Políticas de Seguridad a Nivel de Fila (RLS) en la base de datos.</li>
+<li><strong>Compatibilidad</strong>: La aplicación debe ser compatible con las últimas versiones de los navegadores Google Chrome, Mozilla Firefox y Safari.</li>
+</ul>
+</section>
+</section>
+<section id="diseño-del-sistema" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Diseño del Sistema</h1>
+<section id="arquitectura-general" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="arquitectura-general"><span class="header-section-number">5.1</span> Arquitectura General</h2>
+<p>El siguiente diagrama ilustra la arquitectura de alto nivel de FiveStock, mostrando la interacción entre los componentes principales del sistema:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+    A[Usuario] --&gt;|Navegador Web| B[Frontend: React + Vite]
+    B --&gt;|API REST/GraphQL| C[Supabase: Auth, RPC, Storage]
+    C --&gt;|SQL| D[Base de Datos: PostgreSQL]
+    D --&gt;|Triggers, RLS| C
+    B --&gt;|Generación de Reportes| E[@react-pdf/renderer]
+    B --&gt;|Estado Global| F[Zustand + TanStack Query]
+    B --&gt;|Estilización| G[Styled Components + React Icons]
+    B --&gt;|Navegación| H[React Router]
+    B --&gt;|Formularios| I[React Hook Form]
+    B --&gt;|Tablas| J[@tanstack/react-table]
+    B --&gt;|Alertas| K[SweetAlert2]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="diagramas-de-secuencia" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="diagramas-de-secuencia"><span class="header-section-number">5.2</span> Diagramas de Secuencia</h2>
+<p>A continuación se presenta un diagrama de secuencia que ilustran la interacción entre los componentes del sistema para alguno de los casos de uso más importantes.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">sequenceDiagram
+    participant A as Administrador
+    participant F as Frontend (React)
+    participant R as SupabaseRPC
+    participant P as ReactPDF
+    A-&gt;&gt;F: Navega a /reportes/inventario-valorado
+    F-&gt;&gt;R: Llama a RPC "inventariovalorado"
+    R-&gt;&gt;R: SELECT de "productos" y calcula (stock * preciocompra)
+    R--&gt;&gt;F: Retorna datos del inventario valorizado
+    F-&gt;&gt;P: Pasa los datos al componente PDFViewer
+    P-&gt;&gt;P: Renderiza el documento PDF en el cliente
+    P--&gt;&gt;F: Muestra el PDF en la interfaz
+    F-&gt;&gt;A: El administrador visualiza y puede descargar el reporte
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="diagrama-de-clases-del-dominio" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="diagrama-de-clases-del-dominio"><span class="header-section-number">5.3</span> Diagrama de Clases del Dominio</h2>
+<p>El diagrama de clases modela las entidades principales del sistema y sus relaciones, reflejando la estructura de la base de datos y el estado de la aplicación.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">classDiagram
+    class Usuario {
+        +id: bigint
+        +nombres: text
+        +correo: text
+        +tipouser: text
+        +idauth: text
+        +iniciarSesion()
+        +cerrarSesion()
+        +asignarPermiso()
+    }
+    class Permiso {
+        +id: bigint
+        +id_usuario: bigint
+        +id_modulo: bigint
+    }
+    class Modulo {
+        +id: bigint
+        +nombre: text
+    }
+    class Empresa {
+        +id: bigint
+        +nombre: text
+        +simbolomoneda: text
+        +cuit: text
+        +direccion: text
+    }
+    class Categoria {
+        +id: bigint
+        +descripcion: text
+        +color: text
+    }
+    class Marca {
+        +id: bigint
+        +descripcion: text
+    }
+    class Producto {
+        +id: bigint
+        +descripcion: text
+        +stock: numeric
+        +stock_minimo: numeric
+        +precioventa: numeric
+        +preciocompra: numeric
+        +actualizarStock()
+    }
+    class Kardex {
+        +id: bigint
+        +tipo: text
+        +cantidad: float
+        +detalle: text
+        +fecha: date
+        +registrarMovimiento()
+    }
+
+    Usuario "1" -- "*" Permiso : gestiona
+    Modulo "1" -- "*" Permiso : es asignado en
+    Empresa "1" -- "*" Usuario : pertenece a
+    Empresa "1" -- "*" Categoria : define
+    Empresa "1" -- "*" Marca : define
+    Empresa "1" -- "*" Producto : posee
+    Categoria "1" -- "*" Producto : agrupa
+    Marca "1" -- "*" Producto : pertenece a
+    Producto "1" -- "*" Kardex : registra movimientos en
+    Usuario "1" -- "*" Kardex : realiza
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="diseño-de-base-de-datos-der" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="diseño-de-base-de-datos-der"><span class="header-section-number">5.4</span> Diseño de Base de Datos (DER)</h2>
+<p>El diseño de la base de datos se ha implementado en PostgreSQL a través de Supabase. El siguiente Diagrama Entidad-Relación (DER) ilustra la estructura de las tablas y sus relaciones.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">erDiagram
+    usuarios {
+        bigint id PK
+        text nombres
+        text correo
+        text tipouser
+        text idauth
+        date fecharegistro
+    }
+    empresa {
+        bigint id PK
+        text nombre
+        text simbolomoneda
+        text cuit
+        text direccion
+        bigint iduseradmin FK
+    }
+    asignarempresa {
+        bigint id PK
+        bigint id_empresa FK
+        bigint id_usuario FK
+    }
+    permisos {
+        bigint id PK
+        bigint id_usuario FK
+        bigint idmodulo FK
+    }
+    modulos {
+        bigint id PK
+        text nombre
+    }
+    productos {
+        bigint id PK
+        text descripcion
+        numeric stock
+        numeric stock_minimo
+        numeric precioventa
+        numeric preciocompra
+        bigint idmarca FK
+        bigint id_categoria FK
+        bigint id_empresa FK
+    }
+    categorias {
+        bigint id PK
+        text descripcion
+        text color
+        bigint id_empresa FK
+    }
+    marca {
+        bigint id PK
+        text descripcion
+        bigint id_empresa FK
+    }
+    kardex {
+        bigint id PK
+        date fecha
+        text tipo
+        float cantidad
+        text detalle
+        bigint id_usuario FK
+        bigint id_producto FK
+        bigint id_empresa FK
+    }
+
+    usuarios ||--|{ asignarempresa : "asigna"
+    empresa ||--|{ asignarempresa : "asigna"
+    empresa ||--o{ usuarios : "administra por"
+    usuarios ||--|{ permisos : "tiene"
+    modulos ||--|{ permisos : "concede"
+    empresa ||--|{ productos : "tiene"
+    empresa ||--|{ categorias : "define"
+    empresa ||--|{ marca : "define"
+    categorias ||--o{ productos : "agrupa"
+    marca ||--o{ productos : "es de"
+    productos ||--|{ kardex : "registra en"
+    usuarios ||--o{ kardex : "realiza"
+    empresa ||--|{ kardex : "pertenece a"
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="tecnologías-utilizadas" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Tecnologías Utilizadas</h1>
+<p>Este proyecto fue desarrollado utilizando el siguiente stack de tecnologías:</p>
+<section id="frontend" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="frontend"><span class="header-section-number">6.1</span> Frontend</h2>
+<ul>
+<li><strong>React (v19)</strong>: Biblioteca principal para la construcción de interfaces de usuario interactivas.</li>
+<li><strong>Vite</strong>: Herramienta de desarrollo frontend que proporciona un entorno de desarrollo rápido y optimizado.</li>
+<li><strong>Styled Components</strong>: Para la estilización de componentes de forma encapsulada y dinámica.</li>
+<li><strong>React Router (v7)</strong>: Para gestionar el enrutamiento y la navegación dentro de la aplicación.</li>
+<li><strong>TanStack Query (React Query) (v5)</strong>: Para la gestión del estado del servidor, incluyendo fetching, caching y actualización de datos de forma eficiente.</li>
+<li><strong>Zustand</strong>: Para la gestión de estados globales del cliente de manera simple y potente.</li>
+<li><strong>React Hook Form</strong>: Para la creación y validación de formularios complejos.</li>
+</ul>
+</section>
+<section id="backend-baas" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="backend-baas"><span class="header-section-number">6.2</span> Backend (BaaS)</h2>
+<ul>
+<li><strong>Supabase</strong>: Plataforma open source que provee una base de datos PostgreSQL, servicios de autenticación, almacenamiento de archivos y APIs auto-generadas.</li>
+</ul>
+</section>
+<section id="librerías-adicionales" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="librerías-adicionales"><span class="header-section-number">6.3</span> Librerías Adicionales</h2>
+<ul>
+<li><strong><span class="citation" data-cites="react-pdf/renderer">@react-pdf/renderer</span></strong>: Para la generación dinámica de documentos PDF en el lado del cliente.</li>
+<li><strong><span class="citation" data-cites="tanstack/react-table">@tanstack/react-table</span></strong>: Para la creación de tablas y datagrids complejos con funcionalidades de paginación, ordenamiento y filtrado.</li>
+<li><strong>SweetAlert2</strong>: Para la creación de alertas y modales atractivos y personalizables.</li>
+<li><strong>React Icons</strong>: Para la inclusión de una amplia variedad de iconos en la aplicación.</li>
+</ul>
+</section>
+</section>
+<section id="diseño-de-base-de-datos-expandido" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Diseño de Base de Datos (Expandido)</h1>
+<section id="descripción-detallada-de-tablas" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="descripción-detallada-de-tablas"><span class="header-section-number">7.1</span> Descripción Detallada de Tablas</h2>
+<section id="tabla-usuarios" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="tabla-usuarios"><span class="header-section-number">7.1.1</span> Tabla <code>usuarios</code></h3>
+<p><strong>Propósito</strong>: Almacena información completa de todos los usuarios del sistema.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 14%">
+<col style="width: 31%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Campo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+<th>Restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td>bigint</td>
+<td>Identificador único auto-generado</td>
+<td>PRIMARY KEY, IDENTITY</td>
+</tr>
+<tr class="even">
+<td>nombres</td>
+<td>text</td>
+<td>Nombre completo del usuario</td>
+<td>NOT NULL, DEFAULT ‘generico’</td>
+</tr>
+<tr class="odd">
+<td>nro_doc</td>
+<td>text</td>
+<td>Número de documento de identidad</td>
+<td>DEFAULT ‘-’</td>
+</tr>
+<tr class="even">
+<td>tipodoc</td>
+<td>text</td>
+<td>Tipo de documento (DNI, Pasaporte, etc.)</td>
+<td>DEFAULT ‘-’</td>
+</tr>
+<tr class="odd">
+<td>telefono</td>
+<td>text</td>
+<td>Número de teléfono de contacto</td>
+<td>DEFAULT ‘-’</td>
+</tr>
+<tr class="even">
+<td>direccion</td>
+<td>text</td>
+<td>Dirección física del usuario</td>
+<td>DEFAULT ‘-’</td>
+</tr>
+<tr class="odd">
+<td>correo</td>
+<td>text</td>
+<td>Dirección de correo electrónico</td>
+<td>DEFAULT ‘-’</td>
+</tr>
+<tr class="even">
+<td>tipouser</td>
+<td>text</td>
+<td>Rol del usuario (superadmin, admin, empleado)</td>
+<td>NOT NULL</td>
+</tr>
+<tr class="odd">
+<td>idauth</td>
+<td>text</td>
+<td>ID de autenticación de Supabase</td>
+<td>NOT NULL</td>
+</tr>
+<tr class="even">
+<td>fecharegistro</td>
+<td>date</td>
+<td>Fecha de registro en el sistema</td>
+<td>NOT NULL</td>
+</tr>
+<tr class="odd">
+<td>estado</td>
+<td>text</td>
+<td>Estado del usuario (activo, inactivo)</td>
+<td>DEFAULT ‘activo’</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tabla-empresa" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="tabla-empresa"><span class="header-section-number">7.1.2</span> Tabla <code>empresa</code></h3>
+<p><strong>Propósito</strong>: Información de las empresas registradas en el sistema.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 14%">
+<col style="width: 31%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Campo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+<th>Restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td>bigint</td>
+<td>Identificador único de la empresa</td>
+<td>PRIMARY KEY, IDENTITY</td>
+</tr>
+<tr class="even">
+<td>nombre</td>
+<td>text</td>
+<td>Nombre comercial de la empresa</td>
+<td>NOT NULL</td>
+</tr>
+<tr class="odd">
+<td>simbolomoneda</td>
+<td>text</td>
+<td>Símbolo de la moneda utilizada</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>cuit</td>
+<td>text</td>
+<td>Código Único de Identificación Tributaria</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>direccion</td>
+<td>text</td>
+<td>Dirección fiscal de la empresa</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>telefono</td>
+<td>text</td>
+<td>Teléfono de contacto</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>rubro</td>
+<td>text</td>
+<td>Sector o rubro de la empresa</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>logo_url</td>
+<td>text</td>
+<td>URL del logotipo de la empresa</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>iduseradmin</td>
+<td>bigint</td>
+<td>ID del usuario administrador</td>
+<td>FK a usuarios(id)</td>
+</tr>
+<tr class="even">
+<td>id_empresa</td>
+<td>bigint</td>
+<td>ID de empresa padre (para jerarquías)</td>
+<td>FK a empresa(id)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tabla-productos" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="tabla-productos"><span class="header-section-number">7.1.3</span> Tabla <code>productos</code></h3>
+<p><strong>Propósito</strong>: Catálogo de productos manejados por cada empresa.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 14%">
+<col style="width: 31%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Campo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+<th>Restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td>bigint</td>
+<td>Identificador único del producto</td>
+<td>PRIMARY KEY, IDENTITY</td>
+</tr>
+<tr class="even">
+<td>descripcion</td>
+<td>text</td>
+<td>Descripción del producto</td>
+<td>NOT NULL</td>
+</tr>
+<tr class="odd">
+<td>stock</td>
+<td>numeric</td>
+<td>Cantidad actual en inventario</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>stock_minimo</td>
+<td>bigint</td>
+<td>Nivel mínimo de stock (alertas)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>codigobarras</td>
+<td>text</td>
+<td>Código de barras del producto</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>codigointerno</td>
+<td>text</td>
+<td>Código interno de la empresa</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>precioventa</td>
+<td>numeric</td>
+<td>Precio de venta al público</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>preciocompra</td>
+<td>numeric</td>
+<td>Costo de adquisición</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>idmarca</td>
+<td>bigint</td>
+<td>ID de la marca</td>
+<td>FK a marca(id)</td>
+</tr>
+<tr class="even">
+<td>id_categoria</td>
+<td>bigint</td>
+<td>ID de la categoría</td>
+<td>FK a categorias(id)</td>
+</tr>
+<tr class="odd">
+<td>id_empresa</td>
+<td>bigint</td>
+<td>ID de la empresa propietaria</td>
+<td>FK a empresa(id)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tabla-kardex" class="level3" data-number="7.1.4">
+<h3 data-number="7.1.4" class="anchored" data-anchor-id="tabla-kardex"><span class="header-section-number">7.1.4</span> Tabla <code>kardex</code></h3>
+<p><strong>Propósito</strong>: Registro histórico de todos los movimientos de inventario.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 14%">
+<col style="width: 31%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Campo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+<th>Restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td>bigint</td>
+<td>Identificador único del movimiento</td>
+<td>PRIMARY KEY, IDENTITY</td>
+</tr>
+<tr class="even">
+<td>fecha</td>
+<td>date</td>
+<td>Fecha del movimiento</td>
+<td>NOT NULL</td>
+</tr>
+<tr class="odd">
+<td>tipo</td>
+<td>text</td>
+<td>Tipo de movimiento (entrada, salida)</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>cantidad</td>
+<td>double_precision</td>
+<td>Cantidad involucrada en el movimiento</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>detalle</td>
+<td>text</td>
+<td>Descripción del motivo del movimiento</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>estado</td>
+<td>bigint</td>
+<td>Estado del registro (1=activo, 0=anulado)</td>
+<td>DEFAULT 1</td>
+</tr>
+<tr class="odd">
+<td>id_usuario</td>
+<td>bigint</td>
+<td>Usuario que realizó el movimiento</td>
+<td>FK a usuarios(id)</td>
+</tr>
+<tr class="even">
+<td>id_producto</td>
+<td>bigint</td>
+<td>Producto afectado</td>
+<td>FK a productos(id)</td>
+</tr>
+<tr class="odd">
+<td>id_empresa</td>
+<td>bigint</td>
+<td>Empresa propietaria</td>
+<td>FK a empresa(id)</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="funciones-y-procedimientos-almacenados" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="funciones-y-procedimientos-almacenados"><span class="header-section-number">7.2</span> Funciones y Procedimientos Almacenados</h2>
+<section id="funciones-de-búsqueda-y-consulta" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="funciones-de-búsqueda-y-consulta"><span class="header-section-number">7.2.1</span> Funciones de Búsqueda y Consulta</h3>
+<section id="buscarproductos_id_empresa-buscador" class="level4" data-number="7.2.1.1">
+<h4 data-number="7.2.1.1" class="anchored" data-anchor-id="buscarproductos_id_empresa-buscador"><span class="header-section-number">7.2.1.1</span> <code>buscarproductos(_id_empresa, buscador)</code></h4>
+<ul>
+<li><strong>Propósito</strong>: Búsqueda de productos por descripción dentro de una empresa</li>
+<li><strong>Parámetros</strong>: ID de empresa, texto de búsqueda</li>
+<li><strong>Retorna</strong>: Lista de productos con información de marca y categoría</li>
+</ul>
+</section>
+<section id="mostrarkardexempresa_id_empresa" class="level4" data-number="7.2.1.2">
+<h4 data-number="7.2.1.2" class="anchored" data-anchor-id="mostrarkardexempresa_id_empresa"><span class="header-section-number">7.2.1.2</span> <code>mostrarkardexempresa(_id_empresa)</code></h4>
+<ul>
+<li><strong>Propósito</strong>: Obtener historial completo de movimientos de inventario</li>
+<li><strong>Parámetros</strong>: ID de empresa</li>
+<li><strong>Retorna</strong>: Movimientos con información de productos y usuarios</li>
+</ul>
+</section>
+<section id="inventariovalorado_id_empresa" class="level4" data-number="7.2.1.3">
+<h4 data-number="7.2.1.3" class="anchored" data-anchor-id="inventariovalorado_id_empresa"><span class="header-section-number">7.2.1.3</span> <code>inventariovalorado(_id_empresa)</code></h4>
+<ul>
+<li><strong>Propósito</strong>: Calcular valor total del inventario</li>
+<li><strong>Parámetros</strong>: ID de empresa</li>
+<li><strong>Retorna</strong>: Productos con stock valorizado (stock × precio_compra)</li>
+</ul>
+</section>
+<section id="reportproductosbajominimo_id_empresa" class="level4" data-number="7.2.1.4">
+<h4 data-number="7.2.1.4" class="anchored" data-anchor-id="reportproductosbajominimo_id_empresa"><span class="header-section-number">7.2.1.4</span> <code>reportproductosbajominimo(_id_empresa)</code></h4>
+<ul>
+<li><strong>Propósito</strong>: Identificar productos con stock bajo el mínimo</li>
+<li><strong>Parámetros</strong>: ID de empresa</li>
+<li><strong>Retorna</strong>: Lista de productos que requieren reabastecimiento</li>
+</ul>
+</section>
+</section>
+<section id="funciones-de-inserción-con-validación" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="funciones-de-inserción-con-validación"><span class="header-section-number">7.2.2</span> Funciones de Inserción con Validación</h3>
+<section id="insertarproductos..." class="level4" data-number="7.2.2.1">
+<h4 data-number="7.2.2.1" class="anchored" data-anchor-id="insertarproductos..."><span class="header-section-number">7.2.2.1</span> <code>insertarproductos(...)</code></h4>
+<ul>
+<li><strong>Propósito</strong>: Insertar nuevos productos evitando duplicados</li>
+<li><strong>Validación</strong>: Verifica que no exista otro producto con la misma descripción en la empresa</li>
+<li><strong>Comportamiento</strong>: Lanza excepción si encuentra duplicados</li>
+</ul>
+</section>
+<section id="insertarcategorias..." class="level4" data-number="7.2.2.2">
+<h4 data-number="7.2.2.2" class="anchored" data-anchor-id="insertarcategorias..."><span class="header-section-number">7.2.2.2</span> <code>insertarcategorias(...)</code></h4>
+<ul>
+<li><strong>Propósito</strong>: Crear nuevas categorías de productos</li>
+<li><strong>Validación</strong>: Previene categorías duplicadas por empresa</li>
+</ul>
+</section>
+<section id="insertarmarca..." class="level4" data-number="7.2.2.3">
+<h4 data-number="7.2.2.3" class="anchored" data-anchor-id="insertarmarca..."><span class="header-section-number">7.2.2.3</span> <code>insertarmarca(...)</code></h4>
+<ul>
+<li><strong>Propósito</strong>: Registrar nuevas marcas de productos</li>
+<li><strong>Validación</strong>: Evita marcas duplicadas por empresa</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="triggers-y-automatización" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="triggers-y-automatización"><span class="header-section-number">7.3</span> Triggers y Automatización</h2>
+<section id="modificarstock-after-insert-on-kardex" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="modificarstock-after-insert-on-kardex"><span class="header-section-number">7.3.1</span> <code>modificarstock</code> (AFTER INSERT ON kardex)</h3>
+<ul>
+<li><strong>Propósito</strong>: Actualizar automáticamente el stock de productos</li>
+<li><strong>Comportamiento</strong>:
+<ul>
+<li>Entrada: Incrementa stock</li>
+<li>Salida: Decrementa stock (valida disponibilidad)</li>
+</ul></li>
+<li><strong>Validación</strong>: Previene salidas que excedan el stock disponible</li>
+</ul>
+</section>
+<section id="insertpermisos-after-insert-on-usuarios" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="insertpermisos-after-insert-on-usuarios"><span class="header-section-number">7.3.2</span> <code>insertpermisos</code> (AFTER INSERT ON usuarios)</h3>
+<ul>
+<li><strong>Propósito</strong>: Asignar permisos automáticamente a nuevos usuarios</li>
+<li><strong>Comportamiento</strong>:
+<ul>
+<li>Superadmin: Recibe todos los permisos y se crea una empresa genérica</li>
+<li>Otros roles: Permisos específicos según configuración</li>
+</ul></li>
+</ul>
+</section>
+<section id="insertpordefecto-after-insert-on-empresa" class="level3" data-number="7.3.3">
+<h3 data-number="7.3.3" class="anchored" data-anchor-id="insertpordefecto-after-insert-on-empresa"><span class="header-section-number">7.3.3</span> <code>insertpordefecto</code> (AFTER INSERT ON empresa)</h3>
+<ul>
+<li><strong>Propósito</strong>: Configurar datos iniciales para nuevas empresas</li>
+<li><strong>Comportamiento</strong>:
+<ul>
+<li>Crea marca “Genérica”</li>
+<li>Crea categoría “General”</li>
+<li>Asigna empresa al usuario administrador</li>
+</ul></li>
+</ul>
+</section>
+<section id="eliminarkardextrigger-before-delete-on-kardex" class="level3" data-number="7.3.4">
+<h3 data-number="7.3.4" class="anchored" data-anchor-id="eliminarkardextrigger-before-delete-on-kardex"><span class="header-section-number">7.3.4</span> <code>eliminarkardextrigger</code> (BEFORE DELETE ON kardex)</h3>
+<ul>
+<li><strong>Propósito</strong>: Manejar anulación de movimientos de inventario</li>
+<li><strong>Comportamiento</strong>:
+<ul>
+<li>Crea registro de anulación</li>
+<li>Revierte cambios en stock</li>
+<li>Mantiene trazabilidad completa</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="políticas-de-seguridad-rls---row-level-security" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="políticas-de-seguridad-rls---row-level-security"><span class="header-section-number">7.4</span> Políticas de Seguridad (RLS - Row Level Security)</h2>
+<section id="políticas-de-lectura-select" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="políticas-de-lectura-select"><span class="header-section-number">7.4.1</span> Políticas de Lectura (SELECT)</h3>
+<ul>
+<li><strong>Usuarios</strong>: Solo pueden ver sus propios datos</li>
+<li><strong>Empresas</strong>: Solo administradores pueden ver datos de su empresa</li>
+<li><strong>Productos/Kardex</strong>: Acceso basado en pertenencia a la empresa</li>
+<li><strong>Categorías/Marcas</strong>: Acceso público dentro del contexto de empresa</li>
+</ul>
+</section>
+<section id="políticas-de-escritura-insertupdatedelete" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="políticas-de-escritura-insertupdatedelete"><span class="header-section-number">7.4.2</span> Políticas de Escritura (INSERT/UPDATE/DELETE)</h3>
+<ul>
+<li><strong>Superadmin</strong>: Acceso completo a todas las operaciones</li>
+<li><strong>Administrador</strong>: Acceso limitado a su empresa</li>
+<li><strong>Empleado</strong>: Solo operaciones de kardex y consultas</li>
+</ul>
+</section>
+</section>
+<section id="índices-y-optimización" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="índices-y-optimización"><span class="header-section-number">7.5</span> Índices y Optimización</h2>
+<section id="índices" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="índices"><span class="header-section-number">7.5.1</span> Índices</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- ## Índices Simples ##</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Mejoran el rendimiento de los JOINs y filtros en columnas específicas.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">-- Índices para la tabla KARDEX (muy importante por su gran volumen de datos)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_kardex_id_empresa <span class="kw">ON</span> kardex(id_empresa);</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_kardex_id_producto <span class="kw">ON</span> kardex(id_producto);</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_kardex_fecha <span class="kw">ON</span> kardex(fecha);</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_kardex_id_usuario <span class="kw">ON</span> kardex(id_usuario);</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">-- Índices para la tabla PRODUCTOS</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_productos_id_empresa <span class="kw">ON</span> productos(id_empresa);</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_productos_id_categoria <span class="kw">ON</span> productos(id_categoria);</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_productos_idmarca <span class="kw">ON</span> productos(idmarca);</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">-- Índices para la tabla ASIGNAREMPRESA</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_asignarempresa_id_usuario <span class="kw">ON</span> asignarempresa(id_usuario);</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_asignarempresa_id_empresa <span class="kw">ON</span> asignarempresa(id_empresa);</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">-- Índices para la tabla PERMISOS</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_permisos_id_usuario <span class="kw">ON</span> permisos(id_usuario);</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_permisos_idmodulo <span class="kw">ON</span> permisos(idmodulo);</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">-- Otros índices sobre claves foráneas</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_categorias_id_empresa <span class="kw">ON</span> categorias(id_empresa);</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_marca_id_empresa <span class="kw">ON</span> marca(id_empresa);</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_empresa_iduseradmin <span class="kw">ON</span> empresa(iduseradmin);</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">-- ## Índices de Texto (GIN con Trigramas) ##</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">-- Aceleran las búsquedas con ILIKE '%texto%'.</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_productos_descripcion_gin <span class="kw">ON</span> productos <span class="kw">USING</span> gin (descripcion gin_trgm_ops);</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_usuarios_nombres_gin <span class="kw">ON</span> usuarios <span class="kw">USING</span> gin (nombres gin_trgm_ops);</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co">-- ## Índices Compuestos ##</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co">-- Optimizan consultas que filtran por múltiples columnas a la vez.</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co">-- Para buscar eficientemente en el kardex de una empresa por producto o por fecha</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_kardex_empresa_producto <span class="kw">ON</span> kardex(id_empresa, id_producto);</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_kardex_empresa_fecha <span class="kw">ON</span> kardex(id_empresa, fecha <span class="kw">DESC</span>);</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="co">-- Para buscar eficientemente productos de una empresa</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> idx_productos_empresa_descripcion <span class="kw">ON</span> productos(id_empresa, descripcion);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="integridad-y-consistencia" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="integridad-y-consistencia"><span class="header-section-number">7.6</span> Integridad y Consistencia</h2>
+<section id="restricciones-de-integridad-referencial" class="level3" data-number="7.6.1">
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="restricciones-de-integridad-referencial"><span class="header-section-number">7.6.1</span> Restricciones de Integridad Referencial</h3>
+<ul>
+<li><strong>CASCADE DELETE</strong>: Configurado para mantener consistencia al eliminar empresas</li>
+<li><strong>Validaciones</strong>: Implementadas a nivel de función para prevenir duplicados</li>
+<li><strong>Transacciones</strong>: Triggers garantizan operaciones atómicas</li>
+</ul>
+</section>
+<section id="auditoria-y-trazabilidad" class="level3" data-number="7.6.2">
+<h3 data-number="7.6.2" class="anchored" data-anchor-id="auditoria-y-trazabilidad"><span class="header-section-number">7.6.2</span> Auditoria y Trazabilidad</h3>
+<ul>
+<li><strong>Kardex</strong>: Mantiene historial completo de movimientos</li>
+<li><strong>Estados</strong>: Sistema de anulación que preserva datos históricos</li>
+<li><strong>Usuarios</strong>: Registro de quien realizó cada operación</li>
+</ul>
+</section>
+</section>
+<section id="escalabilidad-y-mantenimiento" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="escalabilidad-y-mantenimiento"><span class="header-section-number">7.7</span> Escalabilidad y Mantenimiento</h2>
+<section id="diseño-multi-tenant" class="level3" data-number="7.7.1">
+<h3 data-number="7.7.1" class="anchored" data-anchor-id="diseño-multi-tenant"><span class="header-section-number">7.7.1</span> Diseño Multi-tenant</h3>
+<ul>
+<li><strong>Separación por empresa</strong>: Cada empresa maneja sus propios datos</li>
+<li><strong>Permisos granulares</strong>: Sistema flexible de roles y permisos</li>
+</ul>
+</section>
+<section id="extensibilidad" class="level3" data-number="7.7.2">
+<h3 data-number="7.7.2" class="anchored" data-anchor-id="extensibilidad"><span class="header-section-number">7.7.2</span> Extensibilidad</h3>
+<ul>
+<li><strong>Nuevos módulos</strong>: Fácil incorporación través de tabla <code>modulos</code></li>
+<li><strong>Campos personalizados</strong>: Estructura permite agregar información específica</li>
+<li><strong>Reportes</strong>: Funciones SQL reutilizables para nuevos reportes</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="implementación-del-sistema" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Implementación del Sistema</h1>
+<section id="arquitectura-del-sistema" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="arquitectura-del-sistema"><span class="header-section-number">8.1</span> Arquitectura del Sistema</h2>
+<p>El sistema implementa una arquitectura de tres capas:</p>
+<ol type="1">
+<li><strong>Capa de Presentación (Frontend)</strong>: Desarrollada en React con Vite, maneja la interfaz de usuario y la experiencia del usuario.</li>
+<li><strong>Capa de Lógica de Negocio (Backend)</strong>: Implementada a través de Supabase con funciones PostgreSQL y políticas RLS.</li>
+<li><strong>Capa de Datos</strong>: Base de datos PostgreSQL con triggers, funciones y procedimientos almacenados.</li>
+</ol>
+</section>
+<section id="patrones-de-diseño-implementados" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="patrones-de-diseño-implementados"><span class="header-section-number">8.2</span> Patrones de Diseño Implementados</h2>
+<p>Para asegurar un código mantenible, escalable y reutilizable, el proyecto implementa varios patrones de diseño tanto en la arquitectura general como en la construcción de la interfaz de usuario.</p>
+<section id="patrones-de-arquitectura-y-estado" class="level3" data-number="8.2.1">
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="patrones-de-arquitectura-y-estado"><span class="header-section-number">8.2.1</span> Patrones de Arquitectura y Estado</h3>
+<ul>
+<li><strong>Observer Pattern</strong>:
+<ul>
+<li><strong>TanStack Query</strong>: Se utiliza para gestionar el estado del servidor. Los componentes se “suscriben” a las <em>queries</em>, y la biblioteca se encarga de notificarles automáticamente cuando los datos cambian, se invalidan o se actualizan en segundo plano.</li>
+<li><strong>Zustand</strong>: Aplica este patrón para el estado global del cliente. Los componentes que utilizan un <em>store</em> se re-renderizan automáticamente cuando el estado que consumen es modificado, garantizando una UI sincronizada.</li>
+</ul></li>
+<li><strong>Repository Pattern</strong>:
+<ul>
+<li><strong>Stores de Zustand</strong> (ej. <code>useProductosStore</code>): Cada <em>store</em> actúa como un repositorio que centraliza y abstrae la lógica de acceso a los datos de un dominio específico (productos, usuarios, etc.). Encapsula las llamadas a Supabase y la manipulación del estado, proporcionando una API limpia al resto de la aplicación.</li>
+<li><strong>Funciones CRUD en Supabase</strong> (ej. <code>crudUsuarios.jsx</code>): Los módulos CRUD (<code>/src/supabase/</code>) agrupan las funciones que interactúan directamente con la base de datos, separando la lógica de la capa de datos de la lógica de la aplicación.</li>
+</ul></li>
+</ul>
+</section>
+<section id="atomic-design-para-la-arquitectura-de-componentes" class="level3" data-number="8.2.2">
+<h3 data-number="8.2.2" class="anchored" data-anchor-id="atomic-design-para-la-arquitectura-de-componentes"><span class="header-section-number">8.2.2</span> Atomic Design para la Arquitectura de Componentes</h3>
+<p>Para la estructura y organización de los componentes de React, el proyecto adopta la metodología de <strong>Atomic Design</strong>. Este enfoque permite construir interfaces de manera jerárquica y escalable, promoviendo la máxima reutilización de código y la consistencia visual en toda la aplicación. La estructura de carpetas en <code>src/components/</code> refleja directamente esta metodología:</p>
+<ul>
+<li><strong>Átomos (<code>/atomos</code>)</strong>: Son los bloques de construcción más básicos e indivisibles de la UI. No tienen estado propio y son puramente presentacionales.
+<ul>
+<li><em>Ejemplos</em>: <code>Title.jsx</code>, <code>Icono.jsx</code>, <code>BtnCerrar.jsx</code>.</li>
+</ul></li>
+<li><strong>Moléculas (<code>/moleculas</code>)</strong>: Son grupos de átomos que funcionan juntos como una unidad lógica. Comienzan a tener una funcionalidad específica.
+<ul>
+<li><em>Ejemplos</em>: <code>CardDatosEmpresa.jsx</code>, que combina íconos y títulos; <code>BtnSave.jsx</code>, que une un ícono y un texto en un botón de acción.</li>
+</ul></li>
+<li><strong>Organismos (<code>/organismos</code>)</strong>: Son componentes más complejos que agrupan moléculas y/o átomos para formar secciones distintas y reutilizables de una interfaz.
+<ul>
+<li><em>Ejemplos</em>: <code>Header.jsx</code>, <code>Sidebar.jsx</code>, y las tablas como <code>TablaProductos.jsx</code>.</li>
+</ul></li>
+<li><strong>Plantillas (<code>/templates</code>)</strong>: Definen la estructura y el layout de una página, posicionando los organismos y otros componentes. Actúan como esqueletos sin datos reales.
+<ul>
+<li><em>Ejemplos</em>: <code>HomeTemplate.jsx</code>, <code>LoginTemplate.jsx</code>, <code>CategoriasTemplate.jsx</code>.</li>
+</ul></li>
+<li><strong>Páginas (<code>/pages</code>)</strong>: Son instancias concretas de las plantillas donde se inyectan los datos y el estado de la aplicación. Representan lo que el usuario final ve en una ruta específica.
+<ul>
+<li><em>Ejemplos</em>: <code>Home.jsx</code>, <code>Login.jsx</code>, <code>Productos.jsx</code>.</li>
+</ul></li>
+</ul>
+<p>Este enfoque modular no solo facilita el desarrollo y el mantenimiento, sino que también permite escalar la aplicación de manera ordenada, añadiendo nuevas funcionalidades sin romper las existentes.</p>
+</section>
+</section>
+<section id="seguridad-implementada" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="seguridad-implementada"><span class="header-section-number">8.3</span> Seguridad Implementada</h2>
+<section id="autenticación-y-autorización" class="level3" data-number="8.3.1">
+<h3 data-number="8.3.1" class="anchored" data-anchor-id="autenticación-y-autorización"><span class="header-section-number">8.3.1</span> Autenticación y Autorización</h3>
+<ul>
+<li><strong>JWT Tokens</strong>: Gestionados automáticamente por Supabase</li>
+<li><strong>Row Level Security (RLS)</strong>: Políticas a nivel de fila para el acceso a datos</li>
+<li><strong>Roles y Permisos</strong>: Sistema granular de control de acceso</li>
+</ul>
+</section>
+<section id="validación-de-datos" class="level3" data-number="8.3.2">
+<h3 data-number="8.3.2" class="anchored" data-anchor-id="validación-de-datos"><span class="header-section-number">8.3.2</span> Validación de Datos</h3>
+<ul>
+<li><strong>Frontend</strong>: React Hook Form con validaciones en tiempo real</li>
+<li><strong>Backend</strong>: Funciones PostgreSQL con validaciones de integridad</li>
+<li><strong>Sanitización</strong>: Prevención de inyecciones SQL mediante RPC</li>
+</ul>
+</section>
+</section>
+<section id="performance-y-optimización" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="performance-y-optimización"><span class="header-section-number">8.4</span> Performance y Optimización</h2>
+<section id="optimizaciones-del-frontend" class="level3" data-number="8.4.1">
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="optimizaciones-del-frontend"><span class="header-section-number">8.4.1</span> Optimizaciones del Frontend</h3>
+<ul>
+<li><strong>Code Splitting</strong>: Carga diferida de componentes</li>
+<li><strong>Memorización</strong>: React.memo y useMemo para evitar re-renderizados</li>
+<li><strong>Lazy Loading</strong>: Carga perezosa de componentes pesados</li>
+</ul>
+</section>
+<section id="optimizaciones-del-backend" class="level3" data-number="8.4.2">
+<h3 data-number="8.4.2" class="anchored" data-anchor-id="optimizaciones-del-backend"><span class="header-section-number">8.4.2</span> Optimizaciones del Backend</h3>
+<ul>
+<li><strong>Índices de Base de Datos</strong>: Optimización de consultas frecuentes</li>
+<li><strong>Funciones Compiladas</strong>: Procedimientos almacenados para operaciones complejas</li>
+<li><strong>Caching</strong>: TanStack Query para cache inteligente de datos</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="conclusiones" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Conclusiones</h1>
+<section id="logros-alcanzados" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="logros-alcanzados"><span class="header-section-number">9.1</span> Logros Alcanzados</h2>
+<p>FiveStock logró entregar una plataforma web funcional para la gestión de inventarios en un plazo de 3 meses. Los principales logros incluyen:<br>
+- <strong>Plataforma Completa</strong>: Implementación de módulos para autenticación, configuración, control de inventario (Kardex) y generación de reportes en PDF, cubriendo los requisitos funcionales.<br>
+- <strong>Rendimiento y Usabilidad</strong>: Tiempos de carga de páginas inferiores a 3 segundos y operaciones clave realizables en menos de 5 clics, garantizando una experiencia intuitiva.<br>
+- <strong>Seguridad Robusta</strong>: Autenticación con JWT y políticas RLS en Supabase, asegurando un acceso granular y seguro a los datos.<br>
+- <strong>Diseño Responsivo</strong>: Compatibilidad con dispositivos móviles y navegadores modernos, mejorando la accesibilidad.</p>
+</section>
+<section id="lecciones-aprendidas" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="lecciones-aprendidas"><span class="header-section-number">9.2</span> Lecciones Aprendidas</h2>
+<p>Durante el desarrollo, se identificaron desafíos clave, como la optimización de consultas SQL y la configuración de políticas RLS para garantizar un acceso seguro sin comprometer el rendimiento. Estas experiencias resaltaron la importancia de un diseño de base de datos escalable y la selección de tecnologías como Supabase, que facilitaron una rápida iteración.</p>
+</section>
+<section id="impacto-esperado" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="impacto-esperado"><span class="header-section-number">9.3</span> Impacto Esperado</h2>
+<p>FiveStock tiene el potencial de transformar la gestión de inventarios para PyMEs, reduciendo el tiempo de gestión y minimizando errores humanos, permitiendo a las empresas mejorar su eficiencia operativa y competitividad.</p>
+<p>FiveStock representa una solución innovadora y adaptable que no solo cumple con los requisitos iniciales, sino que también establece una base sólida para futuras mejoras, posicionándose como una herramienta clave para la digitalización de PyMEs.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

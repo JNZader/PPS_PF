@@ -1,0 +1,739 @@
+---
+title: "Documento de Diseño y Desarrollo"
+subtitle: "FiveStock"
+author:
+  - "Fernandez, Santino"
+  - "Collins, Cristian Horacio"
+  - "Zych, Marcelo Orlando"
+  - "Zader, Javier Norberto"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    lang: es
+    theme: cosmo
+    fontsize: 11pt
+    mainfont: "Helvetica"
+    fig-cap-location: bottom
+    fig-width: 6
+    fig-height: 4
+---
+
+# Introducción
+
+## Nombre del Proyecto
+FiveStock
+
+## Resumen Ejecutivo
+FiveStock es una plataforma web diseñada para optimizar la gestión de inventarios en pequeñas y medianas empresas (PyMEs), con un enfoque inicial en el reparto de agua embotellada, pero adaptable a diversos modelos de negocio. Utilizando Supabase, ofrece una solución escalable, segura y fácil de usar para automatizar procesos, reducir errores y mejorar la toma de decisiones.
+
+## Potencial Cliente
+El proyecto se originó para atender las necesidades de un negocio de reparto de agua embotellada, pero su diseño flexible permite adaptarlo a una amplia gama de PyMEs, incluyendo tiendas minoristas, supermercados de barrio y distribuidores de productos físicos. La plataforma está dirigida a empresas que buscan una solución moderna y económica para gestionar sus inventarios sin recurrir a software propietario costoso.
+
+## Descripción del Proyecto
+FiveStock es una plataforma web robusta que centraliza la gestión de inventarios, integrando módulos para la administración de productos, personal, movimientos de inventario (Kardex) y reportes en PDF. Construida sobre Supabase, aprovecha una base de datos PostgreSQL, autenticación segura con JWT y políticas de seguridad a nivel de fila (RLS). La aplicación es responsiva, compatible con navegadores modernos y dispositivos móviles, y está diseñada para reducir la carga operativa de las PyMEs mediante la automatización de procesos clave, minimizando errores humanos y facilitando la generación de informes detallados.
+
+## Contexto del Problema
+Las PyMEs lidian con múltiples desafíos en la gestión de inventarios: errores frecuentes al controlar el stock, tareas manuales que consumen tiempo y ausencia de herramientas ágiles para obtener información confiable al instante. Esta falta de control reduce la rentabilidad y frena el crecimiento. FiveStock transforma este escenario con una plataforma intuitiva y flexible que automatiza procesos clave, minimiza errores y potencia la competitividad de tu negocio.
+
+# Objetivo General
+
+Desarrollar una plataforma web para la gestión de inventario, utilizando Supabase, que permita validar el modelo de negocio en un plazo de 3 meses.
+
+# Justificación y Relevancia
+
+Las empresas de venta y distribución de productos físicos enfrentan desafíos significativos en la gestión de inventarios. Un sistema de control de inventario bien estructurado es fundamental para:
+
+- **Mejorar la eficiencia operativa**: Automatiza procesos clave como el seguimiento de stock, registro de ventas y compras, reduciendo la carga de trabajo manual.
+- **Reducir errores humanos**: Minimiza las imprecisiones en la gestión de pedidos y el control de existencias, lo que conduce a una mejor toma de decisiones.
+
+Esta plataforma busca ofrecer una alternativa flexible, moderna y accesible para las PyMEs que no pueden permitirse soluciones de software más costosas y complejas, proporcionando herramientas esenciales para optimizar su operación diaria.
+
+# Definición de Alcances y Requisitos
+
+## Alcance del Proyecto
+
+### Funcionalidades Principales Incluidas
+
+- **Gestión de Usuarios y Autenticación**: Sistema de registro, inicio de sesión y manejo de permisos por roles (Super Administrador, Administrador, Empleado).
+- **Módulo de Configuración**: Permite la gestión de Productos, Personal, Empresa, Categorías y Marcas, con acceso restringido por permisos.
+- **Control de Inventario (Kardex)**: CRUD completo para productos, seguimiento detallado de entradas y salidas con información de usuario, fecha y motivo.
+- **Generación de Reportes**: Creación de informes en formato PDF para visualizar el stock actual (total y por producto), productos con stock bajo el mínimo, Kardex detallado por producto e inventario valorizado.
+- **Personalización de la Interfaz**: Soporte para tema claro y oscuro para adaptarse a las preferencias del usuario.
+
+### Público Objetivo
+
+- Pequeñas y medianas empresas (PyMEs).
+- Empresas de reparto de agua embotellada.
+- Tiendas y supermercados de barrio.
+
+### Plataformas y Disponibilidad
+
+- **Aplicación Web**: Accesible desde navegadores modernos (Chrome, Firefox, Safari).
+- **Diseño Responsivo**: Correcta visualización y funcionalidad en dispositivos móviles, tabletas y de escritorio.
+
+### Limitaciones o Exclusiones
+
+- No se desarrollará una versión de escritorio nativa ni una aplicación móvil nativa.
+- No se incluirán pasarelas de pago.
+- No se integrará con sistemas de facturación electrónica (por ejemplo, AFIP).
+- No se gestionarán rutas de reparto ni se integrará con sistemas de logística externa.
+
+## Requisitos Funcionales
+
+### Casos de Uso
+
+#### Iniciar Sesión
+
+* **Actor**: Super Administrador, Administrador, Empleado.
+* **Precondición**: El usuario debe tener una cuenta activa en el sistema.
+* **Flujo**:
+  1. El usuario navega a la página de inicio de sesión (`/login`).
+  2. Ingresa su correo electrónico y contraseña en el formulario.
+  3. El sistema utiliza la función `signInWithEmail` del `AuthStore` para validar las credenciales contra Supabase Auth.
+  4. Si las credenciales son válidas, se genera un token JWT y se redirige al usuario al panel principal (`/`).
+  5. Si no son válidas, se muestra un mensaje de error en la interfaz.
+* **Tablas Involucradas**: `auth.users`, `usuarios`.
+
+```{mermaid}
+sequenceDiagram
+    participant U as Usuario
+    participant F as Frontend (React)
+    participant S as SupabaseAuth
+    participant B as BaseDatos (PostgreSQL)
+    U->>F: Navega a /login
+    U->>F: Ingresa email y contraseña
+    F->>S: Llama a signInWithPassword(email, pass)
+    S->>B: Valida credenciales en auth.users
+    alt Credenciales Válidas
+        B-->>S: Retorna sesión con Token JWT
+        S-->>F: Éxito, retorna datos del usuario
+        F->>F: Almacena sesión y redirige a /
+    else Credenciales Inválidas
+        B-->>S: Error de autenticación
+        S-->>F: Retorna error
+        F->>U: Muestra mensaje de "Datos incorrectos"
+    end
+```
+
+#### Registrar un Producto Nuevo
+
+* **Actor**: Super Administrador, Administrador.
+* **Precondición**: El usuario debe tener permisos para acceder al módulo de productos.
+* **Flujo**:
+  1. El usuario navega a `/configurar/productos`.
+  2. Abre el modal de registro de productos.
+  3. Completa el formulario con los datos del producto: descripción, stock, stock mínimo, precio de compra y venta, etc.
+  4. Selecciona una categoría y una marca de las listas disponibles.
+  5. Al guardar, se invoca la función `insertarproductos` que llama a la RPC de Supabase `insertarproductos` para persistir los datos.
+  6. El sistema actualiza la tabla de productos en la interfaz.
+* **Tablas Involucradas**: `productos`, `categorias`, `marca`.
+
+```{mermaid}
+sequenceDiagram
+    participant A as Administrador
+    participant F as Frontend (React)
+    participant R as SupabaseRPC
+    participant B as BaseDatos (PostgreSQL)
+    A->>F: Navega a /configurar/productos
+    A->>F: Completa formulario de nuevo producto
+    F->>R: Llama a RPC "insertarproductos" con datos
+    R->>B: Ejecuta INSERT en la tabla "productos"
+    alt Éxito
+        B-->>R: Confirmación
+        R-->>F: Producto creado exitosamente
+        F->>F: Actualiza el estado local (Zustand) y refresca la UI
+    else Error (ej. producto duplicado)
+        B-->>R: Retorna excepción de 'Datos duplicados'
+        R-->>F: Retorna mensaje de error
+        F->>A: Muestra alerta de error
+    end
+```
+
+#### Registrar Movimiento en Kardex
+
+* **Actor**: Super Administrador, Administrador, Empleado.
+* **Precondición**: El usuario debe tener acceso al módulo de Kardex.
+* **Flujo**:
+  1. El usuario navega a la página `/kardex`.
+  2. Hace clic en el botón "+ Entrada" o "- Salida".
+  3. En el modal, busca y selecciona el producto afectado.
+  4. Ingresa la cantidad y un motivo o detalle para el movimiento.
+  5. Al guardar, se realiza un `INSERT` en la tabla `kardex`.
+  6. Un **trigger** (`modificarstock`) en la base de datos se dispara automáticamente para actualizar el campo `stock` en la tabla `productos`. Si es una salida y el stock es insuficiente, la base de datos devuelve un error.
+* **Tablas Involucradas**: `kardex`, `productos`.
+
+```{mermaid}
+sequenceDiagram
+    participant E as Empleado
+    participant F as Frontend (React)
+    participant A as SupabaseAPI
+    participant B as BaseDatos (PostgreSQL)
+    E->>F: Navega a /kardex
+    E->>F: Selecciona "+ Entrada" o "- Salida"
+    E->>F: Completa formulario de movimiento
+    F->>A: Llama a INSERT en tabla "kardex"
+    A->>B: Ejecuta INSERT y dispara trigger "modificarstock"
+    alt Stock Suficiente
+        B->>B: UPDATE en tabla "productos" (stock +/- cantidad)
+        B-->>A: Confirmación
+        A-->>F: Movimiento registrado
+        F->>E: Muestra confirmación
+    else Stock Insuficiente (para salidas)
+        B-->>A: Lanza excepción 'Stock agotado'
+        A-->>F: Retorna error
+        F->>E: Muestra alerta de stock insuficiente
+    end
+```
+
+## Requisitos No Funcionales
+
+- **Rendimiento**: Las consultas a la base de datos y la carga de páginas deben completarse en menos de 3 segundos en condiciones de red estándar.
+- **Usabilidad**: Un usuario debe poder registrar un nuevo producto en menos de 5 clics desde el dashboard.
+- **Seguridad**: La autenticación se maneja con tokens JWT gestionados por Supabase. El acceso a los datos se restringe mediante Políticas de Seguridad a Nivel de Fila (RLS) en la base de datos.
+- **Compatibilidad**: La aplicación debe ser compatible con las últimas versiones de los navegadores Google Chrome, Mozilla Firefox y Safari.
+
+# Diseño del Sistema
+
+##  Arquitectura General
+
+El siguiente diagrama ilustra la arquitectura de alto nivel de FiveStock, mostrando la interacción entre los componentes principales del sistema:
+
+```{mermaid}
+graph TD
+    A[Usuario] -->|Navegador Web| B[Frontend: React + Vite]
+    B -->|API REST/GraphQL| C[Supabase: Auth, RPC, Storage]
+    C -->|SQL| D[Base de Datos: PostgreSQL]
+    D -->|Triggers, RLS| C
+    B -->|Generación de Reportes| E[@react-pdf/renderer]
+    B -->|Estado Global| F[Zustand + TanStack Query]
+    B -->|Estilización| G[Styled Components + React Icons]
+    B -->|Navegación| H[React Router]
+    B -->|Formularios| I[React Hook Form]
+    B -->|Tablas| J[@tanstack/react-table]
+    B -->|Alertas| K[SweetAlert2]
+```
+
+## Diagramas de Secuencia
+
+A continuación se presenta un diagrama de secuencia que ilustran la interacción entre los componentes del sistema para alguno de los casos de uso más importantes.
+
+```{mermaid}
+sequenceDiagram
+    participant A as Administrador
+    participant F as Frontend (React)
+    participant R as SupabaseRPC
+    participant P as ReactPDF
+    A->>F: Navega a /reportes/inventario-valorado
+    F->>R: Llama a RPC "inventariovalorado"
+    R->>R: SELECT de "productos" y calcula (stock * preciocompra)
+    R-->>F: Retorna datos del inventario valorizado
+    F->>P: Pasa los datos al componente PDFViewer
+    P->>P: Renderiza el documento PDF en el cliente
+    P-->>F: Muestra el PDF en la interfaz
+    F->>A: El administrador visualiza y puede descargar el reporte
+```
+
+## Diagrama de Clases del Dominio
+
+El diagrama de clases modela las entidades principales del sistema y sus relaciones, reflejando la estructura de la base de datos y el estado de la aplicación.
+
+```{mermaid}
+classDiagram
+    class Usuario {
+        +id: bigint
+        +nombres: text
+        +correo: text
+        +tipouser: text
+        +idauth: text
+        +iniciarSesion()
+        +cerrarSesion()
+        +asignarPermiso()
+    }
+    class Permiso {
+        +id: bigint
+        +id_usuario: bigint
+        +id_modulo: bigint
+    }
+    class Modulo {
+        +id: bigint
+        +nombre: text
+    }
+    class Empresa {
+        +id: bigint
+        +nombre: text
+        +simbolomoneda: text
+        +cuit: text
+        +direccion: text
+    }
+    class Categoria {
+        +id: bigint
+        +descripcion: text
+        +color: text
+    }
+    class Marca {
+        +id: bigint
+        +descripcion: text
+    }
+    class Producto {
+        +id: bigint
+        +descripcion: text
+        +stock: numeric
+        +stock_minimo: numeric
+        +precioventa: numeric
+        +preciocompra: numeric
+        +actualizarStock()
+    }
+    class Kardex {
+        +id: bigint
+        +tipo: text
+        +cantidad: float
+        +detalle: text
+        +fecha: date
+        +registrarMovimiento()
+    }
+
+    Usuario "1" -- "*" Permiso : gestiona
+    Modulo "1" -- "*" Permiso : es asignado en
+    Empresa "1" -- "*" Usuario : pertenece a
+    Empresa "1" -- "*" Categoria : define
+    Empresa "1" -- "*" Marca : define
+    Empresa "1" -- "*" Producto : posee
+    Categoria "1" -- "*" Producto : agrupa
+    Marca "1" -- "*" Producto : pertenece a
+    Producto "1" -- "*" Kardex : registra movimientos en
+    Usuario "1" -- "*" Kardex : realiza
+```
+
+## Diseño de Base de Datos (DER)
+
+El diseño de la base de datos se ha implementado en PostgreSQL a través de Supabase. El siguiente Diagrama Entidad-Relación (DER) ilustra la estructura de las tablas y sus relaciones.
+
+```{mermaid}
+erDiagram
+    usuarios {
+        bigint id PK
+        text nombres
+        text correo
+        text tipouser
+        text idauth
+        date fecharegistro
+    }
+    empresa {
+        bigint id PK
+        text nombre
+        text simbolomoneda
+        text cuit
+        text direccion
+        bigint iduseradmin FK
+    }
+    asignarempresa {
+        bigint id PK
+        bigint id_empresa FK
+        bigint id_usuario FK
+    }
+    permisos {
+        bigint id PK
+        bigint id_usuario FK
+        bigint idmodulo FK
+    }
+    modulos {
+        bigint id PK
+        text nombre
+    }
+    productos {
+        bigint id PK
+        text descripcion
+        numeric stock
+        numeric stock_minimo
+        numeric precioventa
+        numeric preciocompra
+        bigint idmarca FK
+        bigint id_categoria FK
+        bigint id_empresa FK
+    }
+    categorias {
+        bigint id PK
+        text descripcion
+        text color
+        bigint id_empresa FK
+    }
+    marca {
+        bigint id PK
+        text descripcion
+        bigint id_empresa FK
+    }
+    kardex {
+        bigint id PK
+        date fecha
+        text tipo
+        float cantidad
+        text detalle
+        bigint id_usuario FK
+        bigint id_producto FK
+        bigint id_empresa FK
+    }
+
+    usuarios ||--|{ asignarempresa : "asigna"
+    empresa ||--|{ asignarempresa : "asigna"
+    empresa ||--o{ usuarios : "administra por"
+    usuarios ||--|{ permisos : "tiene"
+    modulos ||--|{ permisos : "concede"
+    empresa ||--|{ productos : "tiene"
+    empresa ||--|{ categorias : "define"
+    empresa ||--|{ marca : "define"
+    categorias ||--o{ productos : "agrupa"
+    marca ||--o{ productos : "es de"
+    productos ||--|{ kardex : "registra en"
+    usuarios ||--o{ kardex : "realiza"
+    empresa ||--|{ kardex : "pertenece a"
+```
+
+# Tecnologías Utilizadas
+
+Este proyecto fue desarrollado utilizando el siguiente stack de tecnologías:
+
+## Frontend
+
+- **React (v19)**: Biblioteca principal para la construcción de interfaces de usuario interactivas.
+- **Vite**: Herramienta de desarrollo frontend que proporciona un entorno de desarrollo rápido y optimizado.
+- **Styled Components**: Para la estilización de componentes de forma encapsulada y dinámica.
+- **React Router (v7)**: Para gestionar el enrutamiento y la navegación dentro de la aplicación.
+- **TanStack Query (React Query) (v5)**: Para la gestión del estado del servidor, incluyendo fetching, caching y actualización de datos de forma eficiente.
+- **Zustand**: Para la gestión de estados globales del cliente de manera simple y potente.
+- **React Hook Form**: Para la creación y validación de formularios complejos.
+
+## Backend (BaaS)
+
+- **Supabase**: Plataforma open source que provee una base de datos PostgreSQL, servicios de autenticación, almacenamiento de archivos y APIs auto-generadas.
+
+## Librerías Adicionales
+
+- **@react-pdf/renderer**: Para la generación dinámica de documentos PDF en el lado del cliente.
+- **@tanstack/react-table**: Para la creación de tablas y datagrids complejos con funcionalidades de paginación, ordenamiento y filtrado.
+- **SweetAlert2**: Para la creación de alertas y modales atractivos y personalizables.
+- **React Icons**: Para la inclusión de una amplia variedad de iconos en la aplicación.
+
+# Diseño de Base de Datos (Expandido)
+
+## Descripción Detallada de Tablas
+
+### Tabla `usuarios`
+**Propósito**: Almacena información completa de todos los usuarios del sistema.
+
+| Campo | Tipo | Descripción | Restricciones |
+|-------|------|-------------|---------------|
+| id | bigint | Identificador único auto-generado | PRIMARY KEY, IDENTITY |
+| nombres | text | Nombre completo del usuario | NOT NULL, DEFAULT 'generico' |
+| nro_doc | text | Número de documento de identidad | DEFAULT '-' |
+| tipodoc | text | Tipo de documento (DNI, Pasaporte, etc.) | DEFAULT '-' |
+| telefono | text | Número de teléfono de contacto | DEFAULT '-' |
+| direccion | text | Dirección física del usuario | DEFAULT '-' |
+| correo | text | Dirección de correo electrónico | DEFAULT '-' |
+| tipouser | text | Rol del usuario (superadmin, admin, empleado) | NOT NULL |
+| idauth | text | ID de autenticación de Supabase | NOT NULL |
+| fecharegistro | date | Fecha de registro en el sistema | NOT NULL |
+| estado | text | Estado del usuario (activo, inactivo) | DEFAULT 'activo' |
+
+### Tabla `empresa`
+**Propósito**: Información de las empresas registradas en el sistema.
+
+| Campo | Tipo | Descripción | Restricciones |
+|-------|------|-------------|---------------|
+| id | bigint | Identificador único de la empresa | PRIMARY KEY, IDENTITY |
+| nombre | text | Nombre comercial de la empresa | NOT NULL |
+| simbolomoneda | text | Símbolo de la moneda utilizada | |
+| cuit | text | Código Único de Identificación Tributaria | |
+| direccion | text | Dirección fiscal de la empresa | |
+| telefono | text | Teléfono de contacto | |
+| rubro | text | Sector o rubro de la empresa | |
+| logo_url | text | URL del logotipo de la empresa | |
+| iduseradmin | bigint | ID del usuario administrador | FK a usuarios(id) |
+| id_empresa | bigint | ID de empresa padre (para jerarquías) | FK a empresa(id) |
+
+### Tabla `productos`
+**Propósito**: Catálogo de productos manejados por cada empresa.
+
+| Campo | Tipo | Descripción | Restricciones |
+|-------|------|-------------|---------------|
+| id | bigint | Identificador único del producto | PRIMARY KEY, IDENTITY |
+| descripcion | text | Descripción del producto | NOT NULL |
+| stock | numeric | Cantidad actual en inventario | |
+| stock_minimo | bigint | Nivel mínimo de stock (alertas) | |
+| codigobarras | text | Código de barras del producto | |
+| codigointerno | text | Código interno de la empresa | |
+| precioventa | numeric | Precio de venta al público | |
+| preciocompra | numeric | Costo de adquisición | |
+| idmarca | bigint | ID de la marca | FK a marca(id) |
+| id_categoria | bigint | ID de la categoría | FK a categorias(id) |
+| id_empresa | bigint | ID de la empresa propietaria | FK a empresa(id) |
+
+### Tabla `kardex`
+**Propósito**: Registro histórico de todos los movimientos de inventario.
+
+| Campo | Tipo | Descripción | Restricciones |
+|-------|------|-------------|---------------|
+| id | bigint | Identificador único del movimiento | PRIMARY KEY, IDENTITY |
+| fecha | date | Fecha del movimiento | NOT NULL |
+| tipo | text | Tipo de movimiento (entrada, salida) | |
+| cantidad | double_precision | Cantidad involucrada en el movimiento | |
+| detalle | text | Descripción del motivo del movimiento | |
+| estado | bigint | Estado del registro (1=activo, 0=anulado) | DEFAULT 1 |
+| id_usuario | bigint | Usuario que realizó el movimiento | FK a usuarios(id) |
+| id_producto | bigint | Producto afectado | FK a productos(id) |
+| id_empresa | bigint | Empresa propietaria | FK a empresa(id) |
+
+## Funciones y Procedimientos Almacenados
+
+### Funciones de Búsqueda y Consulta
+
+#### `buscarproductos(_id_empresa, buscador)`
+- **Propósito**: Búsqueda de productos por descripción dentro de una empresa
+- **Parámetros**: ID de empresa, texto de búsqueda
+- **Retorna**: Lista de productos con información de marca y categoría
+
+#### `mostrarkardexempresa(_id_empresa)`
+- **Propósito**: Obtener historial completo de movimientos de inventario
+- **Parámetros**: ID de empresa
+- **Retorna**: Movimientos con información de productos y usuarios
+
+#### `inventariovalorado(_id_empresa)`
+- **Propósito**: Calcular valor total del inventario
+- **Parámetros**: ID de empresa
+- **Retorna**: Productos con stock valorizado (stock × precio_compra)
+
+#### `reportproductosbajominimo(_id_empresa)`
+- **Propósito**: Identificar productos con stock bajo el mínimo
+- **Parámetros**: ID de empresa
+- **Retorna**: Lista de productos que requieren reabastecimiento
+
+### Funciones de Inserción con Validación
+
+#### `insertarproductos(...)`
+- **Propósito**: Insertar nuevos productos evitando duplicados
+- **Validación**: Verifica que no exista otro producto con la misma descripción en la empresa
+- **Comportamiento**: Lanza excepción si encuentra duplicados
+
+#### `insertarcategorias(...)`
+- **Propósito**: Crear nuevas categorías de productos
+- **Validación**: Previene categorías duplicadas por empresa
+
+#### `insertarmarca(...)`
+- **Propósito**: Registrar nuevas marcas de productos
+- **Validación**: Evita marcas duplicadas por empresa
+
+## Triggers y Automatización
+
+### `modificarstock` (AFTER INSERT ON kardex)
+- **Propósito**: Actualizar automáticamente el stock de productos
+- **Comportamiento**: 
+  - Entrada: Incrementa stock
+  - Salida: Decrementa stock (valida disponibilidad)
+- **Validación**: Previene salidas que excedan el stock disponible
+
+### `insertpermisos` (AFTER INSERT ON usuarios)
+- **Propósito**: Asignar permisos automáticamente a nuevos usuarios
+- **Comportamiento**: 
+  - Superadmin: Recibe todos los permisos y se crea una empresa genérica
+  - Otros roles: Permisos específicos según configuración
+
+### `insertpordefecto` (AFTER INSERT ON empresa)
+- **Propósito**: Configurar datos iniciales para nuevas empresas
+- **Comportamiento**: 
+  - Crea marca "Genérica"
+  - Crea categoría "General"
+  - Asigna empresa al usuario administrador
+
+### `eliminarkardextrigger` (BEFORE DELETE ON kardex)
+- **Propósito**: Manejar anulación de movimientos de inventario
+- **Comportamiento**: 
+  - Crea registro de anulación
+  - Revierte cambios en stock
+  - Mantiene trazabilidad completa
+
+## Políticas de Seguridad (RLS - Row Level Security)
+
+### Políticas de Lectura (SELECT)
+- **Usuarios**: Solo pueden ver sus propios datos
+- **Empresas**: Solo administradores pueden ver datos de su empresa
+- **Productos/Kardex**: Acceso basado en pertenencia a la empresa
+- **Categorías/Marcas**: Acceso público dentro del contexto de empresa
+
+### Políticas de Escritura (INSERT/UPDATE/DELETE)
+- **Superadmin**: Acceso completo a todas las operaciones
+- **Administrador**: Acceso limitado a su empresa
+- **Empleado**: Solo operaciones de kardex y consultas
+
+## Índices y Optimización
+
+### Índices
+```sql
+---
+-- ## Índices Simples ##
+-- Mejoran el rendimiento de los JOINs y filtros en columnas específicas.
+---
+
+-- Índices para la tabla KARDEX (muy importante por su gran volumen de datos)
+CREATE INDEX IF NOT EXISTS idx_kardex_id_empresa ON kardex(id_empresa);
+CREATE INDEX IF NOT EXISTS idx_kardex_id_producto ON kardex(id_producto);
+CREATE INDEX IF NOT EXISTS idx_kardex_fecha ON kardex(fecha);
+CREATE INDEX IF NOT EXISTS idx_kardex_id_usuario ON kardex(id_usuario);
+
+
+-- Índices para la tabla PRODUCTOS
+CREATE INDEX IF NOT EXISTS idx_productos_id_empresa ON productos(id_empresa);
+CREATE INDEX IF NOT EXISTS idx_productos_id_categoria ON productos(id_categoria);
+CREATE INDEX IF NOT EXISTS idx_productos_idmarca ON productos(idmarca);
+
+
+-- Índices para la tabla ASIGNAREMPRESA
+CREATE INDEX IF NOT EXISTS idx_asignarempresa_id_usuario ON asignarempresa(id_usuario);
+CREATE INDEX IF NOT EXISTS idx_asignarempresa_id_empresa ON asignarempresa(id_empresa);
+
+
+-- Índices para la tabla PERMISOS
+CREATE INDEX IF NOT EXISTS idx_permisos_id_usuario ON permisos(id_usuario);
+CREATE INDEX IF NOT EXISTS idx_permisos_idmodulo ON permisos(idmodulo);
+
+
+-- Otros índices sobre claves foráneas
+CREATE INDEX IF NOT EXISTS idx_categorias_id_empresa ON categorias(id_empresa);
+CREATE INDEX IF NOT EXISTS idx_marca_id_empresa ON marca(id_empresa);
+CREATE INDEX IF NOT EXISTS idx_empresa_iduseradmin ON empresa(iduseradmin);
+
+
+---
+-- ## Índices de Texto (GIN con Trigramas) ##
+-- Aceleran las búsquedas con ILIKE '%texto%'.
+---
+
+CREATE INDEX IF NOT EXISTS idx_productos_descripcion_gin ON productos USING gin (descripcion gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_usuarios_nombres_gin ON usuarios USING gin (nombres gin_trgm_ops);
+
+
+---
+-- ## Índices Compuestos ##
+-- Optimizan consultas que filtran por múltiples columnas a la vez.
+---
+
+-- Para buscar eficientemente en el kardex de una empresa por producto o por fecha
+CREATE INDEX IF NOT EXISTS idx_kardex_empresa_producto ON kardex(id_empresa, id_producto);
+CREATE INDEX IF NOT EXISTS idx_kardex_empresa_fecha ON kardex(id_empresa, fecha DESC);
+
+-- Para buscar eficientemente productos de una empresa
+CREATE INDEX IF NOT EXISTS idx_productos_empresa_descripcion ON productos(id_empresa, descripcion);
+```
+
+## Integridad y Consistencia
+
+### Restricciones de Integridad Referencial
+- **CASCADE DELETE**: Configurado para mantener consistencia al eliminar empresas
+- **Validaciones**: Implementadas a nivel de función para prevenir duplicados
+- **Transacciones**: Triggers garantizan operaciones atómicas
+
+### Auditoria y Trazabilidad
+- **Kardex**: Mantiene historial completo de movimientos
+- **Estados**: Sistema de anulación que preserva datos históricos
+- **Usuarios**: Registro de quien realizó cada operación
+
+## Escalabilidad y Mantenimiento
+
+### Diseño Multi-tenant
+- **Separación por empresa**: Cada empresa maneja sus propios datos
+- **Permisos granulares**: Sistema flexible de roles y permisos
+
+### Extensibilidad
+- **Nuevos módulos**: Fácil incorporación través de tabla `modulos`
+- **Campos personalizados**: Estructura permite agregar información específica
+- **Reportes**: Funciones SQL reutilizables para nuevos reportes
+
+# Implementación del Sistema
+
+## Arquitectura del Sistema
+
+El sistema implementa una arquitectura de tres capas:
+
+1. **Capa de Presentación (Frontend)**: Desarrollada en React con Vite, maneja la interfaz de usuario y la experiencia del usuario.
+2. **Capa de Lógica de Negocio (Backend)**: Implementada a través de Supabase con funciones PostgreSQL y políticas RLS.
+3. **Capa de Datos**: Base de datos PostgreSQL con triggers, funciones y procedimientos almacenados.
+
+## Patrones de Diseño Implementados
+
+Para asegurar un código mantenible, escalable y reutilizable, el proyecto implementa varios patrones de diseño tanto en la arquitectura general como en la construcción de la interfaz de usuario.
+
+### Patrones de Arquitectura y Estado
+
+-   **Observer Pattern**:
+    -   **TanStack Query**: Se utiliza para gestionar el estado del servidor. Los componentes se "suscriben" a las *queries*, y la biblioteca se encarga de notificarles automáticamente cuando los datos cambian, se invalidan o se actualizan en segundo plano.
+    -   **Zustand**: Aplica este patrón para el estado global del cliente. Los componentes que utilizan un *store* se re-renderizan automáticamente cuando el estado que consumen es modificado, garantizando una UI sincronizada.
+
+-   **Repository Pattern**:
+    -   **Stores de Zustand** (ej. `useProductosStore`): Cada *store* actúa como un repositorio que centraliza y abstrae la lógica de acceso a los datos de un dominio específico (productos, usuarios, etc.). Encapsula las llamadas a Supabase y la manipulación del estado, proporcionando una API limpia al resto de la aplicación.
+    -   **Funciones CRUD en Supabase** (ej. `crudUsuarios.jsx`): Los módulos CRUD (`/src/supabase/`) agrupan las funciones que interactúan directamente con la base de datos, separando la lógica de la capa de datos de la lógica de la aplicación.
+
+### Atomic Design para la Arquitectura de Componentes
+
+Para la estructura y organización de los componentes de React, el proyecto adopta la metodología de **Atomic Design**. Este enfoque permite construir interfaces de manera jerárquica y escalable, promoviendo la máxima reutilización de código y la consistencia visual en toda la aplicación. La estructura de carpetas en `src/components/` refleja directamente esta metodología:
+
+-   **Átomos (`/atomos`)**: Son los bloques de construcción más básicos e indivisibles de la UI. No tienen estado propio y son puramente presentacionales.
+    * *Ejemplos*: `Title.jsx`, `Icono.jsx`, `BtnCerrar.jsx`.
+
+-   **Moléculas (`/moleculas`)**: Son grupos de átomos que funcionan juntos como una unidad lógica. Comienzan a tener una funcionalidad específica.
+    * *Ejemplos*: `CardDatosEmpresa.jsx`, que combina íconos y títulos; `BtnSave.jsx`, que une un ícono y un texto en un botón de acción.
+
+-   **Organismos (`/organismos`)**: Son componentes más complejos que agrupan moléculas y/o átomos para formar secciones distintas y reutilizables de una interfaz.
+    * *Ejemplos*: `Header.jsx`, `Sidebar.jsx`, y las tablas como `TablaProductos.jsx`.
+
+-   **Plantillas (`/templates`)**: Definen la estructura y el layout de una página, posicionando los organismos y otros componentes. Actúan como esqueletos sin datos reales.
+    * *Ejemplos*: `HomeTemplate.jsx`, `LoginTemplate.jsx`, `CategoriasTemplate.jsx`.
+
+-   **Páginas (`/pages`)**: Son instancias concretas de las plantillas donde se inyectan los datos y el estado de la aplicación. Representan lo que el usuario final ve en una ruta específica.
+    * *Ejemplos*: `Home.jsx`, `Login.jsx`, `Productos.jsx`.
+
+Este enfoque modular no solo facilita el desarrollo y el mantenimiento, sino que también permite escalar la aplicación de manera ordenada, añadiendo nuevas funcionalidades sin romper las existentes.
+
+## Seguridad Implementada
+
+### Autenticación y Autorización
+- **JWT Tokens**: Gestionados automáticamente por Supabase
+- **Row Level Security (RLS)**: Políticas a nivel de fila para el acceso a datos
+- **Roles y Permisos**: Sistema granular de control de acceso
+
+### Validación de Datos
+- **Frontend**: React Hook Form con validaciones en tiempo real
+- **Backend**: Funciones PostgreSQL con validaciones de integridad
+- **Sanitización**: Prevención de inyecciones SQL mediante RPC
+
+## Performance y Optimización
+
+### Optimizaciones del Frontend
+- **Code Splitting**: Carga diferida de componentes
+- **Memorización**: React.memo y useMemo para evitar re-renderizados
+- **Lazy Loading**: Carga perezosa de componentes pesados
+
+### Optimizaciones del Backend
+- **Índices de Base de Datos**: Optimización de consultas frecuentes
+- **Funciones Compiladas**: Procedimientos almacenados para operaciones complejas
+- **Caching**: TanStack Query para cache inteligente de datos
+
+# Conclusiones
+
+## Logros Alcanzados
+
+FiveStock logró entregar una plataforma web funcional para la gestión de inventarios en un plazo de 3 meses. Los principales logros incluyen:  
+- **Plataforma Completa**: Implementación de módulos para autenticación, configuración, control de inventario (Kardex) y generación de reportes en PDF, cubriendo los requisitos funcionales.  
+- **Rendimiento y Usabilidad**: Tiempos de carga de páginas inferiores a 3 segundos y operaciones clave realizables en menos de 5 clics, garantizando una experiencia intuitiva.  
+- **Seguridad Robusta**: Autenticación con JWT y políticas RLS en Supabase, asegurando un acceso granular y seguro a los datos.  
+- **Diseño Responsivo**: Compatibilidad con dispositivos móviles y navegadores modernos, mejorando la accesibilidad.  
+
+## Lecciones Aprendidas
+
+Durante el desarrollo, se identificaron desafíos clave, como la optimización de consultas SQL y la configuración de políticas RLS para garantizar un acceso seguro sin comprometer el rendimiento. Estas experiencias resaltaron la importancia de un diseño de base de datos escalable y la selección de tecnologías como Supabase, que facilitaron una rápida iteración.
+
+## Impacto Esperado
+
+FiveStock tiene el potencial de transformar la gestión de inventarios para PyMEs, reduciendo el tiempo de gestión y minimizando errores humanos, permitiendo a las empresas mejorar su eficiencia operativa y competitividad.
+
+FiveStock representa una solución innovadora y adaptable que no solo cumple con los requisitos iniciales, sino que también establece una base sólida para futuras mejoras, posicionándose como una herramienta clave para la digitalización de PyMEs.
