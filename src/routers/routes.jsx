@@ -25,11 +25,11 @@ import StockInventarioValorado from "../components/organismos/report/StockInvent
 import { Layout } from "../hooks/Layout";
 import { FileViewer } from "../pages/FileViewer";
 
-import docHtmlUrl from '../assets/doc.html?url';
-
 export function MyRoutes() {
 
   const googleSlidesEmbedUrl = "https://docs.google.com/presentation/d/1ADwWbSfiLTwJZnNQJNVButtFvC57GLIDpwHCpOdFH9k/embed?start=false&loop=false&delayms=3000";
+
+  const localDocHtmlUrl = "/docs/doc.html";
 
   return (
     <Routes>
@@ -109,7 +109,7 @@ export function MyRoutes() {
       <Route path="/sobre-nosotros/documentacion" element={<ProtectedRoute accessBy="authenticated">
         <Layout>
           <FileViewer
-            fileUrl={docHtmlUrl}
+            fileUrl={localDocHtmlUrl}
             fileType="html"
           />
         </Layout>
