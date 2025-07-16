@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {
   LinksArray,
   SecondarylinksArray,
+  AboutUsLinksArray,
 } from "../../utils/dataEstatica";
 import { ToggleTema } from "./ToggleTema";
 import { SidebarCard } from "./sidebar/SidebarCard";
@@ -39,6 +40,19 @@ export function MenuHambur() {
           ))}
           <Divider />
           {SecondarylinksArray.map(({ icon, label, to }) => (
+            <div
+              className="LinkContainer"
+              key={label}
+              onClick={() => setClick(!click)}
+            >
+              <NavLink to={to} className="Links">
+                <div className="Linkicon">{icon}</div>
+                <span>{label}</span>
+              </NavLink>
+            </div>
+          ))}
+          <Divider />
+          {AboutUsLinksArray.map(({ icon, label, to }) => (
             <div
               className="LinkContainer"
               key={label}
